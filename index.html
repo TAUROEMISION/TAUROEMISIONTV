@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TAUROEMISIÓN LIVE</title>
+    <meta charset="UTF-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <script>
+        // AQUÍ PEGAS TU URL DE CLOUDFLARE/NGROK
+        const URL_SERVIDOR = "https://milan-bigger-intranet-writing.trycloudflare.com";
+
+        window.onload = function() {
+            // Redirige automáticamente al servidor real
+            window.location.href = URL_SERVIDOR;
+        };
+    </script>
+    <style>
+        body { background: #000; color: #ff6600; display: flex; justify-content: center; 
+               align-items: center; height: 100vh; font-family: sans-serif; margin: 0; }
+    </style>
+</head>
+<body>
+    <div style="text-align:center;">
+        <h2>CONECTANDO CON EL RUEDO...</h2>
+        <p>Si no carga, pulsa <a href="#" onclick="window.location.reload();" style="color:white;">aquí</a></p>
+    </div>
+</body>
+</html>
