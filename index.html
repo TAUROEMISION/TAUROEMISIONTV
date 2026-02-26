@@ -4,24 +4,55 @@
     <meta charset="UTF-8">
     <title>TAUROEMISION TV</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <script>
-        // Tu dirección actual de Cloudflare
-        const servidorReal = "https://milan-bigger-intranet-writing.trycloudflare.com";
-
-        window.onload = function() {
-            // Reemplazamos la URL para que no pueda volver atrás fácilmente a ver el enlace
-            window.location.replace(servidorReal);
-        };
-    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- PWA Manifest - IMPORTANTE para que se instale -->
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiVEFVUk9FTUlTSU9OIFRWIiwiY29sb3IiOiIjZmY2NjAwIiwic3RhcnRfdXJsIjoiLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIn0=">
+    
     <style>
-        body { background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; color: #ff6600; font-family: sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { height: 100%; overflow: hidden; background: #000; }
+        iframe { 
+            border: 0; 
+            width: 100%; 
+            height: 100vh; 
+            background: #000; 
+        }
+        .loading {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #000; display: flex; align-items: center; justify-content: center;
+            color: #ff6600; font-family: sans-serif; z-index: 9999;
+        }
+        .spinner {
+            border: 3px solid #ff6600; border-radius: 50%; border-top: 3px solid #fff;
+            width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div style="text-align:center;">
-        <h2 style="margin-bottom:10px;">CARGANDO EXPERIENCIA...</h2>
-        <div style="border: 3px solid #ff6600; border-radius: 50%; border-top: 3px solid #fff; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: auto;"></div>
+    <!-- Loading mientras carga el iframe -->
+    <div class="loading" id="loading">
+        <div style="text-align:center;">
+            <h2>TAUROEMISION TV</h2>
+            <div class="spinner"></div>
+            <p>Cargando experiencia...</p>
+        </div>
     </div>
-    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+    
+    <!-- TU SERVIDOR REAL - CAMBIA SOLO ESTA LÍNEA cuando cambie el túnel -->
+    <iframe id="mainFrame" src="https://milan-bigger-intranet-writing.trycloudflare.com"></iframe>
+
+    <script>
+        // Oculta loading cuando el iframe carga
+        document.getElementById('mainFrame').onload = function() {
+            document.getElementById('loading').style.display = 'none';
+        };
+        
+        // Si falla el iframe, muestra error
+        document.getElementById('mainFrame').onerror = function() {
+            document.getElementById('loading').innerHTML = '<h2 style="color:#ff0000;">❌ Servidor no disponible</h2><p>Inténtalo de nuevo en unos minutos.</p>';
+        };
+    </script>
 </body>
 </html>
