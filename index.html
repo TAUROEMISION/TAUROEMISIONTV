@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
-    <title>TAUROEMISION LIVE</title>
+    <title>TAURO🐂TV</title>
     
     <link rel="icon" type="image/png" href="logo_tauro.png">
     <link rel="apple-touch-icon" href="logo_tauro.png">
@@ -16,15 +16,24 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        
         .loading {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: #0a0a0a; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; color: #fff; z-index: 9999;
         }
-        .logo-txt { font-size: 2.5em; font-weight: 900; color: #ff6600; }
+        
+        /* LETRAS MÁS PEQUEÑAS PARA QUE NO SE CORTEN */
+        .logo-txt { 
+            font-size: 1.8em; /* Ajustado para que quepa entero */
+            font-weight: 900; 
+            color: #ff6600; 
+            letter-spacing: 1px;
+        }
+        
         .spinner {
             border: 4px solid rgba(255,102,0,0.2); border-top: 4px solid #ff6600;
-            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-top: 20px;
+            border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin-top: 20px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         iframe { border: 0; width: 100%; height: 100vh; display: none; }
@@ -34,22 +43,19 @@
 
     <div class="loading" id="loading">
         <div class="logo-txt">TAUROEMISION</div>
-        <div style="font-size: 1.2em; color: #ddd;">LIVE</div>
+        <div style="font-size: 1em; color: #ddd; margin-top: 5px;">TV LIVE</div>
         <div class="spinner"></div>
     </div>
     
     <iframe id="mainFrame" src=""></iframe>
 
     <script>
-        // ==========================================
-        // 👇 ¡SOLO CAMBIA ESTA LÍNEA DE AQUÍ ABAJO! 👇
+        // 👇 ¡SOLO CAMBIA ESTA URL CUANDO REINICIES EL SERVIDOR! 👇
         const miServidor = "https://milan-bigger-intranet-writing.trycloudflare.com";
-        // ==========================================
 
         const frame = document.getElementById('mainFrame');
         const loading = document.getElementById('loading');
         
-        // Asignamos la URL al iframe
         frame.src = miServidor;
 
         frame.onload = () => { 
@@ -57,10 +63,9 @@
             frame.style.display = 'block';
         };
 
-        // Tiempo de espera por si el túnel está caído
         setTimeout(() => {
             if (loading.style.display !== 'none') {
-                loading.innerHTML = '<div style="color:#ff6600; font-size:3em;">⚠️</div><p>CONECTANDO CON LA PLAZA...</p>';
+                loading.innerHTML = '<div style="color:#ff6600; font-size:2.5em;">⚠️</div><p>BUSCANDO SEÑAL...</p>';
             }
         }, 12000);
     </script>
