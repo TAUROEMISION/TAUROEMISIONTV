@@ -2,15 +2,20 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TAUROEMISION TV</title>
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🟠 TAUROEMISION TV</title>
     
-    <!-- PWA Manifest - IMPORTANTE para que se instale -->
-    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlRBVU9FTUlTSU9OIFRWLAogICJzaG9ydF9uYW1lIjogIlRhdXJvIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJ0aGVtZV9jb2xvciI6ICIjZmY2NjAwIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDAwMDAwIiwKICAiaWNvbnMiOiBbXQp9">
-    <link rel="icon" href="/icon-192.png" sizes="192x192">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-                
+    <!-- META PWA MÓVIL (más potente que manifest) -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="TAUROEMISION">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ff6600">
+    
+    <!-- ICONOS SVG INLINE (funcionan 100% en GitHub) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9Ijk2IiBmaWxsPSIjRkY2NjAwIi8+CjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjgwIiBmaWxsPSIjMDAwMDAwIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDYiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNjYwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QsOywrsgPCvdI+PC90ZXh0Pgo8L3N2Zz4=">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9Ijk2IiBmaWxsPSIjRkY2NjAwIi8+CjxjaXJjbGUgY3g9Ijk2IiBjeT0iOTYiIHI9IjgwIiBmaWxsPSIjMDAwMDAwIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDYiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZm9udC13ZWlnaHQ9IjkwMCIgZmlsbD0iI0ZGNjYwMCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QsOywrsgPCvdI+PC90ZXh0Pgo8L3N2Zz4=">
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; overflow: hidden; background: #000; }
@@ -22,39 +27,47 @@
         }
         .loading {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: #000; display: flex; align-items: center; justify-content: center;
-            color: #ff6600; font-family: sans-serif; z-index: 9999;
+            background: linear-gradient(135deg, #000 0%, #ff6600 50%, #000 100%);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            z-index: 9999; text-align: center;
         }
+        .logo { font-size: 2.5em; margin-bottom: 20px; }
         .spinner {
-            border: 3px solid #ff6600; border-radius: 50%; border-top: 3px solid #fff;
-            width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto;
+            border: 4px solid rgba(255,255,255,0.2); 
+            border-top: 4px solid #fff;
+            border-radius: 50%; width: 50px; height: 50px; 
+            animation: spin 1s linear infinite; margin: 20px auto;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <!-- Loading mientras carga el iframe -->
     <div class="loading" id="loading">
-        <div style="text-align:center;">
-            <h2>TAUROEMISION TV</h2>
-            <div class="spinner"></div>
-            <p>Cargando experiencia...</p>
-        </div>
+        <div class="logo">🟠 TAUROEMISION</div>
+        <div class="spinner"></div>
+        <p style="font-size: 1.1em; margin-top: 10px;">Cargando control...</p>
     </div>
     
-    <!-- TU SERVIDOR REAL - CAMBIA SOLO ESTA LÍNEA cuando cambie el túnel -->
+    <!-- TU TÚNEL - CAMBIA SOLO ESTA LÍNEA -->
     <iframe id="mainFrame" src="https://milan-bigger-intranet-writing.trycloudflare.com"></iframe>
 
     <script>
-        // Oculta loading cuando el iframe carga
-        document.getElementById('mainFrame').onload = function() {
-            document.getElementById('loading').style.display = 'none';
+        const frame = document.getElementById('mainFrame');
+        const loading = document.getElementById('loading');
+        
+        frame.onload = () => {
+            loading.style.display = 'none';
+            // Oculta barra de direcciones en móviles
+            if ('serviceWorker' in navigator) {
+                window.scrollTo(0,1);
+            }
         };
         
-        // Si falla el iframe, muestra error
-        document.getElementById('mainFrame').onerror = function() {
-            document.getElementById('loading').innerHTML = '<h2 style="color:#ff0000;">❌ Servidor no disponible</h2><p>Inténtalo de nuevo en unos minutos.</p>';
+        frame.onerror = () => {
+            loading.innerHTML = '<div class="logo">❌</div><p style="color:#ff4444; font-size:1.2em;">Servidor no disponible<br>Inténtalo en unos minutos 🐂</p>';
         };
     </script>
 </body>
 </html>
+
