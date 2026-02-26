@@ -2,23 +2,68 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TAUROEMISION TV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>TAUROEMISION LIVE</title>
+    
+    <link rel="icon" type="image/png" href="logo_tauro.png">
+    <link rel="apple-touch-icon" href="logo_tauro.png">
+
     <meta name="apple-mobile-web-app-capable" content="yes">
-    
-    <!-- OPCION 1: si tienes logo_tauro.png en RAÍZ -->
-    <link rel="icon" href="/logo_tauro.png">
-    <link rel="apple-touch-icon" href="/logo_tauro.png">
-    
-    <style>*{margin:0;padding:0;box-sizing:border-box}body,html{height:100%;overflow:hidden;background:#000}iframe{border:0;width:100%;height:100vh;background:#000}.loading{position:fixed;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg,#000 0%,#ff6600 50%,#000 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;z-index:9999;text-align:center;font-size:.9em}.logo{font-size:clamp(2em,8vw,4em);margin-bottom:20px;font-weight:900}.spinner{border:4px solid rgba(255,255,255,.2);border-top:4px solid #fff;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;margin:20px auto}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="TAURO🐂TV">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        .loading {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #0a0a0a; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; color: #fff; z-index: 9999;
+        }
+        .logo-txt { font-size: 2.5em; font-weight: 900; color: #ff6600; }
+        .spinner {
+            border: 4px solid rgba(255,102,0,0.2); border-top: 4px solid #ff6600;
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-top: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        iframe { border: 0; width: 100%; height: 100vh; display: none; }
+    </style>
 </head>
 <body>
+
     <div class="loading" id="loading">
-        <div class="logo">🐂 TAUROEMISION</div>
+        <div class="logo-txt">TAUROEMISION</div>
+        <div style="font-size: 1.2em; color: #ddd;">LIVE</div>
         <div class="spinner"></div>
-        <p>Cargando...</p>
     </div>
-    <iframe src="https://milan-bigger-intranet-writing.trycloudflare.com"></iframe>
-    <script>document.querySelector('iframe').onload=()=>{document.getElementById('loading').style.display='none';window.scrollTo(0,1)}</script>
+    
+    <iframe id="mainFrame" src=""></iframe>
+
+    <script>
+        // ==========================================
+        // 👇 ¡SOLO CAMBIA ESTA LÍNEA DE AQUÍ ABAJO! 👇
+        const miServidor = "https://milan-bigger-intranet-writing.trycloudflare.com";
+        // ==========================================
+
+        const frame = document.getElementById('mainFrame');
+        const loading = document.getElementById('loading');
+        
+        // Asignamos la URL al iframe
+        frame.src = miServidor;
+
+        frame.onload = () => { 
+            loading.style.display = 'none'; 
+            frame.style.display = 'block';
+        };
+
+        // Tiempo de espera por si el túnel está caído
+        setTimeout(() => {
+            if (loading.style.display !== 'none') {
+                loading.innerHTML = '<div style="color:#ff6600; font-size:3em;">⚠️</div><p>CONECTANDO CON LA PLAZA...</p>';
+            }
+        }, 12000);
+    </script>
 </body>
 </html>
 
