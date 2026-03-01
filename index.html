@@ -47,43 +47,32 @@
         <div class="spinner"></div>
     </div>
     
-    <iframe id="mainFrame" src=""></iframe>
-
     <script>
-    // 🔴 OBS WEBRTC DIRECTO (FLUJO SIN LAG)
-    const obsWebrtcUrl = "http://100.87.122.28:1985/rtc/v1/whep/?app=live&stream=livestream";
+    const miServidor = "https://soil-arise-alarm-numbers.trycloudflare.com";
     
-    const frame = document.getElementById('mainFrame');
-    const loading = document.getElementById('loading');
+    const video = document.createElement('video');
+    video.id = 'obsVideo';
+    video.style.cssText = `
+        width: 100vw; height: 100vh; 
+        object-fit: contain; background: black;
+        position: fixed; top: 0; left: 0; z-index: 1;
+    `;
+    video.autoplay = true;
+    video.muted = true;
+    video.playsInline = true;
+    document.body.appendChild(video);
     
-    // Carga OBS WebRTC
-    frame.src = obsWebrtcUrl;
+    // Carga stream Flask (funciona 100%)
+    video.src = `${miServidor}/solo_directo`;
     
-    frame.onload = () => { 
-        loading.style.display = 'none'; 
-        frame.style.display = 'block';
-    };
+    video.addEventListener('loadeddata', () => {
+        document.getElementById('loading').style.display = 'none';
+        video.muted = false;
+    });
     
-    // User gesture para audio (Chrome policy)
-    document.addEventListener('click', () => {
-        frame.contentWindow.postMessage({action: 'play'}, '*');
-    }, {once: true});
-    
-    // Fallback si OBS cambia IP/puerto
-    setTimeout(() => {
-        if (loading.style.display !== 'none') {
-            loading.innerHTML = `
-                <div style="color:#ff6600; font-size:2.5em;">⚠️</div>
-                <p>Buscando señal OBS...</p>
-                <p style="font-size:0.8em; color:#888;">
-                    IP: 100.87.122.28:1985<br>
-                    Reinicia servidor si persiste
-                </p>
-            `;
-        }
-    }, 10000);
+    // Click para audio
+    document.addEventListener('click', () => video.muted = false, {once: true});
 </script>
-
 </body>
 </html>
 
