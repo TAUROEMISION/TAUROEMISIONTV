@@ -2,36 +2,53 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Señal Oppo</title>
+  <title>Señal Oppo TAURO</title>
   <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
-  <style>html,body{margin:0;height:100%;background:black;}video{width:100vw;height:100vh;object-fit:contain;}</style>
+  <style>
+    *{margin:0;background:#000;height:100vh;}
+    video{width:100vw;height:100vh;object-fit:contain;}
+    #debug {position:fixed;top:10px;left:10px;color:#ff6600;font-family:monospace;font-size:12px;z-index:999;}
+  </style>
 </head>
 <body>
   <video id="video" controls autoplay muted crossorigin="anonymous"></video>
+  <div id="debug"></div>
   
   <script>
+    flvjs.Log.ENABLE_VERBOSE = true;  // 🔥 MÁS DEBUG
+    
     if (flvjs.isSupported()) {
       const video = document.getElementById('video');
+      const debug = document.getElementById('debug');
+      
       const player = flvjs.createPlayer({
         type: 'flv',
         url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo',
+        isLive: true,           // 🔥 LIVE MODE
         cors: true,
-        enableWorker: false,  // 🔥 LOW LATENCY
-        enableStashBuffer: false,  // 🔥 0 BUFFER
-        stashInitialSize: 128  // 🔥 KEYFRAMES FAST
+        withCredentials: false,
+        enableWorker: false,    // 🔥 LOW LATENCY
+        enableStashBuffer: false,
+        stashInitialSize: 384,  // 🔥 KEYFRAME FAST
+        autoCleanupSourceBuffer: true,
+        autoCleanupMaxBackwardDuration: 3,
+        autoCleanupMinBackwardDuration: 1.5
       });
       
-      player.on(flvjs.Events.LOADING_COMPLETE, () => {
-        console.log('🐂 FLV LOADED');
-        video.play();
-      });
+      // 🔥 DEBUG EVENTS
+      player.on(flvjs.Events.LOADING_COMPLETE, () => debug.innerHTML += '<br>🐂 LOADED');
+      player.on(flvjs.Events.MEDIA_INFO, () => debug.innerHTML += '<br>🐂 MEDIA INFO');
+      player.on(flvjs.Events.METADATA_ARRIVED, () => debug.innerHTML += '<br>🐂 METADATA');
+      player.on(flvjs.Events.FRAME_BUFFERING, () => debug.innerHTML += '<br>🐂 BUFFERING');
       
       player.attachMediaElement(video);
       player.load();
+      player.play();
     }
   </script>
 </body>
 </html>
+
 
 
 
