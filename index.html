@@ -2,12 +2,9 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>TAURO🐂TV SRS</title>
+  <title>TAURO🐂TV</title>
   <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
-  <style>
-    *{margin:0;background:#000;height:100vh;}
-    video{width:100vw;height:100vh;object-fit:contain;}
-  </style>
+  <style>*{margin:0;background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
 </head>
 <body>
   <video id="video" autoplay muted playsinline crossorigin="anonymous"></video>
@@ -15,26 +12,29 @@
   <script>
     if (flvjs.isSupported()) {
       const video = document.getElementById('video');
+      
       const player = flvjs.createPlayer({
         type: 'flv',
         url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo',
         isLive: true,
         cors: true,
-        enableWorker: false,      // LOW LATENCY
-        enableStashBuffer: false, // 0 BUFFER
-        stashInitialSize: 384
+        enableWorker: false,
+        // 🔥 ANTI-NEGRO
+        fixAudioTimestampGap: true,
+        autoCleanupSourceBuffer: true,
+        autoCleanupMaxBackwardDuration: 3
       });
       
       player.attachMediaElement(video);
       player.load();
-      player.play();
       
-      // 🔊 ANTI-MUTE
-      document.addEventListener('click', () => video.muted = false);
+      // 🔊 UNMUTE
+      setTimeout(() => video.muted = false, 2000);
     }
   </script>
 </body>
 </html>
+
 
 
 
