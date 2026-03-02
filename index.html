@@ -1,37 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>TAURO🐂TV</title>
-  <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
-  <style>*{margin:0;background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>TAURO🐂TV</title>
+    
+    <link rel="icon" type="image/png" href="logo_tauro.png">
+    <link rel="apple-touch-icon" href="logo_tauro.png">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="TAURO🐂TV">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        
+        .loading {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #0a0a0a; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; color: #fff; z-index: 9999;
+        }
+        
+        /* LETRAS MÁS PEQUEÑAS PARA QUE NO SE CORTEN */
+        .logo-txt { 
+            font-size: 1.8em; /* Ajustado para que quepa entero */
+            font-weight: 900; 
+            color: #ff6600; 
+            letter-spacing: 1px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255,102,0,0.2); border-top: 4px solid #ff6600;
+            border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin-top: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        iframe { border: 0; width: 100%; height: 100vh; display: none; }
+    </style>
 </head>
 <body>
-  <video id="video" autoplay muted playsinline crossorigin="anonymous"></video>
-  
-  <script>
-    if (flvjs.isSupported()) {
-      const video = document.getElementById('video');
-      
-      const player = flvjs.createPlayer({
-        type: 'flv',
-        url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo',
-        isLive: true,
-        cors: true,
-        enableWorker: false,
-        // 🔥 ANTI-NEGRO
-        fixAudioTimestampGap: true,
-        autoCleanupSourceBuffer: true,
-        autoCleanupMaxBackwardDuration: 3
-      });
-      
-      player.attachMediaElement(video);
-      player.load();
-      
-      // 🔊 UNMUTE
-      setTimeout(() => video.muted = false, 2000);
-    }
-  </script>
+
+    <div class="loading" id="loading">
+        <div class="logo-txt">TAUROEMISION</div>
+        <div style="font-size: 1em; color: #ddd; margin-top: 5px;">TV LIVE</div>
+        <div class="spinner"></div>
+    </div>
+    
+    <iframe id="mainFrame" src=""></iframe>
+
+    <script>
+        // 👇 ¡SOLO CAMBIA ESTA URL CUANDO REINICIES EL SERVIDOR! 👇
+        const miServidor = "https://soil-arise-alarm-numbers.trycloudflare.com";
+
+        const frame = document.getElementById('mainFrame');
+        const loading = document.getElementById('loading');
+        
+        frame.src = miServidor;
+
+        frame.onload = () => { 
+            loading.style.display = 'none'; 
+            frame.style.display = 'block';
+        };
+
+        setTimeout(() => {
+            if (loading.style.display !== 'none') {
+                loading.innerHTML = '<div style="color:#ff6600; font-size:2.5em;">⚠️</div><p>BUSCANDO SEÑAL...</p>';
+            }
+        }, 12000);
+    </script>
 </body>
 </html>
 
