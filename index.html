@@ -50,29 +50,43 @@
     <script>
     const miServidor = "https://soil-arise-alarm-numbers.trycloudflare.com";
     
+    // 🔴 VIDEO OBS FLUIDO
     const video = document.createElement('video');
     video.id = 'obsVideo';
     video.style.cssText = `
-        width: 100vw; height: 100vh; 
-        object-fit: contain; background: black;
-        position: fixed; top: 0; left: 0; z-index: 1;
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        object-fit: contain; background: #000; z-index: 1;
     `;
     video.autoplay = true;
     video.muted = true;
     video.playsInline = true;
+    video.crossOrigin = 'anonymous';
     document.body.appendChild(video);
     
-    // Carga stream Flask (funciona 100%)
+    // Conecta a Flask OBS stream
     video.src = `${miServidor}/solo_directo`;
     
     video.addEventListener('loadeddata', () => {
         document.getElementById('loading').style.display = 'none';
-        video.muted = false;
+        video.classList.add('playing');
+        setTimeout(() => video.muted = false, 500);
     });
     
-    // Click para audio
-    document.addEventListener('click', () => video.muted = false, {once: true});
+    // Click para audio (Chrome policy)
+    document.addEventListener('click', () => {
+        video.muted = false;
+        video.play().catch(e => console.log('Audio OK'));
+    }, {once: true});
+    
+    // Fallback error
+    setTimeout(() => {
+        if (document.getElementById('loading').style.display !== 'none') {
+            document.getElementById('loading').innerHTML = 
+                '<div style="color:#ff6600;font-size:3em;">⚠️</div><p>Sin señal OBS</p>';
+        }
+    }, 10000);
 </script>
+
 </body>
 </html>
 
