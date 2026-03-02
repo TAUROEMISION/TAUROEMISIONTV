@@ -1,22 +1,25 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAURO🐂TV</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100vh; background: #000; overflow: hidden; }
-        img { width: 100vw; height: 100vh; object-fit: cover; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Señal Oppo</title>
+  <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
+  <style>html,body{margin:0;height:100%;background:black;}video{width:100vw;height:100vh;}</style>
 </head>
 <body>
-    <!-- 🔥 TU /solo_directo = 100% ESTABLE -->
-    <img src="https://soil-arise-alarm-numbers.trycloudflare.com/solo_directo" 
-         crossorigin="anonymous" id="stream">
+  <video id="video" controls autoplay muted></video>
+  <script>
+    if (flvjs.isSupported()) {
+      const player = flvjs.createPlayer({
+        type: 'flv',
+        url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo'
+      });
+      player.attachMediaElement(document.getElementById('video'));
+      player.load();
+    }
+  </script>
 </body>
 </html>
-
 
 
 
