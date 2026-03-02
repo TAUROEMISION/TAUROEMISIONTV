@@ -4,12 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TAURO🐂TV</title>
-    <style>*{margin:0;}body{background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
+    <style>*{margin:0;background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
 </head>
 <body>
-    <video id="video" 
-           src="https://soil-arise-alarm-numbers.trycloudflare.com/obs_directo"
-           autoplay muted playsinline controls crossorigin="anonymous">
-    </video>
+    <video id="video" autoplay muted playsinline controls crossorigin="anonymous"></video>
+    
+    <script>
+        const video = document.getElementById('video');
+        const url = 'https://soil-arise-alarm-numbers.trycloudflare.com/obs_directo';
+        
+        // MSE para FLV perfecto
+        if ('MediaSource' in window) {
+            const ms = new MediaSource();
+            video.src = URL.createObjectURL(ms);
+            
+            ms.addEventListener('sourceopen', () => {
+                const sb = ms.addSourceBuffer('video/mp4; codecs="avc1.42E01E,mp4a.40.2"');
+                fetch(url).then(r => r.body.pipeTo(new WritableStream({
+                    write(chunk) { sb.appendBuffer(chunk); }
+                })));
+            });
+        } else {
+            video.src = url;  // Fallback
+        }
+    </script>
 </body>
 </html>
+
