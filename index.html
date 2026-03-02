@@ -47,28 +47,73 @@
         <div class="spinner"></div>
     </div>
     
-    <iframe id="mainFrame" src=""></iframe>
-
     <script>
-        // 👇 ¡SOLO CAMBIA ESTA URL CUANDO REINICIES EL SERVIDOR! 👇
-        const miServidor = "https://soil-arise-alarm-numbers.trycloudflare.com";
+    // 🔴 OBS WEBRTC PLAYER TAURINO
+    const OBS_WHEP = "http://100.87.122.28:1985/rtc/v1/whep/?app=live&stream=livestream";
+    
+    const video = document.createElement('video');
+    video.id = 'obsStream';
+    video.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        object-fit: contain; background: #000; z-index: 1;
+    `;
+    video.autoplay = true;
+    video.muted = true;
+    video.playsInline = true;
+    document.body.appendChild(video);
+    
+    const loading = document.getElementById('loading');
+    
+    // 🔧 WebRTC WHEP Client
+    async function initWebRTC() {
+        try {
+            const response = await fetch(OBS_WHEP);
+            const { url } = await response.json();
+            
+            const peer = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            });
+            
+            peer.addEventListener('track', (event) => {
+                video.srcObject = event.streams[0];
+                loading.style.display = 'none';
+                video.muted = false;
+            });
+            
+            const offer = await peer.createOffer();
+            await peer.setLocalDescription(offer);
+            
+            const session = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/sdp' },
+                body: offer.sdp
+            });
+            
+            const answer = await session.text();
+            await peer.setRemoteDescription({ type: 'answer', sdp: answer });
+            
+        } catch(e) {
+            console.log('WebRTC fail, Flask fallback');
+            fallbackFlask();
+        }
+    }
+    
+    // 🔄 Fallback Flask (tu actual)
+    function fallbackFlask() {
+        video.src = "https://soil-arise-alarm-numbers.trycloudflare.com/solo_directo";
+        video.addEventListener('loadeddata', () => {
+            loading.style.display = 'none';
+            video.muted = false;
+        });
+    }
+    
+    // 🎮 START
+    document.addEventListener('click', initWebRTC, {once: true});
+    
+    // ⏱️ Timeout fallback
+    setTimeout(fallbackFlask, 15000);
+</script>
 
-        const frame = document.getElementById('mainFrame');
-        const loading = document.getElementById('loading');
-        
-        frame.src = miServidor;
-
-        frame.onload = () => { 
-            loading.style.display = 'none'; 
-            frame.style.display = 'block';
-        };
-
-        setTimeout(() => {
-            if (loading.style.display !== 'none') {
-                loading.innerHTML = '<div style="color:#ff6600; font-size:2.5em;">⚠️</div><p>BUSCANDO SEÑAL...</p>';
-            }
-        }, 12000);
-    </script>
 </body>
 </html>
 
