@@ -4,17 +4,29 @@
   <meta charset="UTF-8">
   <title>Señal Oppo</title>
   <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
-  <style>html,body{margin:0;height:100%;background:black;}video{width:100vw;height:100vh;}</style>
+  <style>html,body{margin:0;height:100%;background:black;}video{width:100vw;height:100vh;object-fit:contain;}</style>
 </head>
 <body>
-  <video id="video" controls autoplay muted></video>
+  <video id="video" controls autoplay muted crossorigin="anonymous"></video>
+  
   <script>
     if (flvjs.isSupported()) {
+      const video = document.getElementById('video');
       const player = flvjs.createPlayer({
         type: 'flv',
-        url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo'
+        url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo',
+        cors: true,
+        enableWorker: false,  // 🔥 LOW LATENCY
+        enableStashBuffer: false,  // 🔥 0 BUFFER
+        stashInitialSize: 128  // 🔥 KEYFRAMES FAST
       });
-      player.attachMediaElement(document.getElementById('video'));
+      
+      player.on(flvjs.Events.LOADING_COMPLETE, () => {
+        console.log('🐂 FLV LOADED');
+        video.play();
+      });
+      
+      player.attachMediaElement(video);
       player.load();
     }
   </script>
