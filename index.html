@@ -1,26 +1,48 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAURO🐂TV 60FPS</title>
-    <style> body { margin:0; background:#000; } video { width:100vw; height:100vh; object-fit:contain; } </style>
+    <title>TAURO🐂TV WHIP 0ms</title>
+    <style>*{margin:0;padding:0;}body{background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
 </head>
 <body>
-    <video id="tauro-live" autoplay muted playsinline controls></video>
+    <video id="tauro-whip" autoplay muted playsinline crossorigin="anonymous"></video>
     
     <script>
-        const video = document.getElementById('tauro-live');
-        video.src = "https://soil-arise-alarm-numbers.trycloudflare.com/live/livestream";
+        const video = document.getElementById('tauro-whip');
+        const WHIP_URL = 'https://soil-arise-alarm-numbers.trycloudflare.com/whip/livestream';
         
-        video.addEventListener('loadeddata', () => {
-            video.muted = false;
-            video.play();
-        });
+        // WHIP PULL (WHEP)
+        async function conectarWHIP() {
+            const offerResp = await fetch(WHIP_URL);
+            const offerSDP = await offerResp.text();
+            
+            const pc = new RTCPeerConnection({
+                iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
+            });
+            
+            pc.ontrack = e => {
+                video.srcObject = e.streams[0];
+                video.play();
+            };
+            
+            await pc.setRemoteDescription({type: 'offer', sdp: offerSDP});
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            
+            await fetch(WHIP_URL, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/sdp'},
+                body: answer.sdp
+            });
+        }
         
+        conectarWHIP();
         document.addEventListener('click', () => video.muted = false);
     </script>
 </body>
 </html>
+
 
 
