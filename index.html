@@ -7,47 +7,58 @@
   <style>
     *{margin:0;background:#000;height:100vh;}
     video{width:100vw;height:100vh;object-fit:contain;}
-    #debug {position:fixed;top:10px;left:10px;color:#ff6600;font-family:monospace;font-size:12px;z-index:999;}
+    #debug {position:fixed;top:10px;left:10px;color:#ff6600;font-family:monospace;font-size:12px;z-index:999;background:rgba(0,0,0,0.7);padding:10px;max-height:200px;overflow:auto;}
   </style>
 </head>
 <body>
   <video id="video" controls autoplay muted crossorigin="anonymous"></video>
-  <div id="debug"></div>
+  <div id="debug">🔄 Conectando SRS...</div>
   
   <script>
-    flvjs.Log.ENABLE_VERBOSE = true;  // 🔥 MÁS DEBUG
+    const video = document.getElementById('video');
+    const debug = document.getElementById('debug');
+    
+    function log(msg) {
+      debug.innerHTML += `<br>${new Date().toLocaleTimeString()} ${msg}`;
+      debug.scrollTop = debug.scrollHeight;
+      console.log(msg);
+    }
     
     if (flvjs.isSupported()) {
-      const video = document.getElementById('video');
-      const debug = document.getElementById('debug');
+      log('🐂 flv.js soportado');
       
       const player = flvjs.createPlayer({
         type: 'flv',
         url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo',
-        isLive: true,           // 🔥 LIVE MODE
+        isLive: true,
         cors: true,
-        withCredentials: false,
-        enableWorker: false,    // 🔥 LOW LATENCY
+        enableWorker: false,
         enableStashBuffer: false,
-        stashInitialSize: 384,  // 🔥 KEYFRAME FAST
-        autoCleanupSourceBuffer: true,
-        autoCleanupMaxBackwardDuration: 3,
-        autoCleanupMinBackwardDuration: 1.5
+        stashInitialSize: 384,
+        autoCleanupSourceBuffer: true
       });
       
-      // 🔥 DEBUG EVENTS
-      player.on(flvjs.Events.LOADING_COMPLETE, () => debug.innerHTML += '<br>🐂 LOADED');
-      player.on(flvjs.Events.MEDIA_INFO, () => debug.innerHTML += '<br>🐂 MEDIA INFO');
-      player.on(flvjs.Events.METADATA_ARRIVED, () => debug.innerHTML += '<br>🐂 METADATA');
-      player.on(flvjs.Events.FRAME_BUFFERING, () => debug.innerHTML += '<br>🐂 BUFFERING');
+      // 🔥 EVENTOS DEBUG
+      player.on(flvjs.Events.LOADING_COMPLETE, () => log('🐂 LOADED'));
+      player.on(flvjs.Events.MEDIA_INFO, () => log('🐂 MEDIA INFO'));
+      player.on(flvjs.Events.METADATA_ARRIVED, () => log('🐂 METADATA'));
+      player.on(flvjs.Events.FRAME_BUFFERING, () => log('🐂 BUFFERING'));
+      player.on(flvjs.Events.ERROR, (err) => log(`❌ ERROR: ${err}`));
       
       player.attachMediaElement(video);
       player.load();
-      player.play();
+      log('🚀 Player iniciado');
+      
+    } else {
+      log('❌ flv.js NO soportado');
     }
+    
+    // ANTI-MUTE
+    document.addEventListener('click', () => video.muted = false);
   </script>
 </body>
 </html>
+
 
 
 
