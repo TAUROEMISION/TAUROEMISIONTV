@@ -7,9 +7,9 @@
     <style>*{margin:0;background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
 </head>
 <body>
-    <video src="rtmp://localhost/live/directo" 
-           autoplay muted playsinline controls crossorigin="anonymous">
-        Tu navegador no soporta SRS FLV.
+    <video id="v" src="https://soil-arise-alarm-numbers.trycloudflare.com/live/directo" 
+           autoplay muted playsinline crossorigin="anonymous"
+           onerror="this.load(); setTimeout(()=>this.load(), 2000)">
     </video>
 </body>
 </html>
