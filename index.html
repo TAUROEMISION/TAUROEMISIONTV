@@ -3,16 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAURO🐂TV</title>
+    <title>TAURO🐂TV FLV</title>
+    <!-- 🔥 flv.js PARA FLV BROWSER -->
+    <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
     <style>*{margin:0;background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
 </head>
 <body>
-    <video id="v" src="https://soil-arise-alarm-numbers.trycloudflare.com/live/directo" 
-           autoplay muted playsinline crossorigin="anonymous"
-           onerror="this.load(); setTimeout(()=>this.load(), 2000)">
+    <video id="video" 
+           controls 
+           crossorigin="anonymous"
+           style="width:100vw;height:100vh;">
     </video>
+    
+    <script>
+        if (flvjs.isSupported()) {
+            const video = document.getElementById('video');
+            const flvPlayer = flvjs.createPlayer({
+                type: 'flv',
+                url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo',  // Tu proxy FLV
+                cors: true
+            });
+            flvPlayer.attachMediaElement(video);
+            flvPlayer.load();
+            flvPlayer.play();
+        }
+    </script>
 </body>
 </html>
+
 
 
 
