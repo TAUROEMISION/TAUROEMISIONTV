@@ -1,35 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAURO🐂TV FLV</title>
-    <!-- 🔥 flv.js PARA FLV BROWSER -->
-    <script src="https://cdn.jsdelivr.net/npm/flv.js@1.6.2/dist/flv.min.js"></script>
-    <style>*{margin:0;background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TAURO🐂TV</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { height: 100vh; background: #000; overflow: hidden; }
+        img { width: 100vw; height: 100vh; object-fit: cover; }
+    </style>
 </head>
 <body>
-    <video id="video" 
-           controls 
-           crossorigin="anonymous"
-           style="width:100vw;height:100vh;">
-    </video>
-    
-    <script>
-        if (flvjs.isSupported()) {
-            const video = document.getElementById('video');
-            const flvPlayer = flvjs.createPlayer({
-                type: 'flv',
-                url: 'https://soil-arise-alarm-numbers.trycloudflare.com/live/directo',  // Tu proxy FLV
-                cors: true
-            });
-            flvPlayer.attachMediaElement(video);
-            flvPlayer.load();
-            flvPlayer.play();
-        }
-    </script>
+    <!-- 🔥 TU /solo_directo = 100% ESTABLE -->
+    <img src="https://soil-arise-alarm-numbers.trycloudflare.com/solo_directo" 
+         crossorigin="anonymous" id="stream">
 </body>
 </html>
+
 
 
 
