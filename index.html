@@ -2,58 +2,22 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAURO🐂TV</title>
-    <link rel="icon" type="image/png" href="logo_tauro.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; overflow: hidden; background: #000; }
-        #obs-player {
-            width: 100vw; height: 100vh; object-fit: contain; 
-            position: fixed; top: 0; left: 0; background: #000;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAURO🐂TV 60FPS</title>
+    <style> body { margin:0; background:#000; } video { width:100vw; height:100vh; object-fit:contain; } </style>
 </head>
 <body>
-    <video id="obs-player" autoplay muted playsinline crossorigin="anonymous"></video>
+    <video id="tauro-live" autoplay muted playsinline controls></video>
     
     <script>
-        const OBS_WHEP = "http://100.87.122.28:1985/rtc/v1/whep/?app=live&stream=livestream";
-        const video = document.getElementById('obs-player');
+        const video = document.getElementById('tauro-live');
+        video.src = "https://soil-arise-alarm-numbers.trycloudflare.com/live/livestream";
         
-        // DIRECTO OBS WEBRTC
-        async function conectarOBS() {
-            try {
-                const response = await fetch(OBS_WHEP);
-                const {url} = await response.json();
-                
-                const pc = new RTCPeerConnection({
-                    iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
-                });
-                
-                pc.ontrack = (e) => video.srcObject = e.streams[0];
-                
-                const offer = await pc.createOffer();
-                await pc.setLocalDescription(offer);
-                
-                const session = await fetch(url, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/sdp'},
-                    body: offer.sdp
-                });
-                
-                const answer = await session.text();
-                await pc.setRemoteDescription({type: 'answer', sdp: answer});
-                
-            } catch(e) {
-                // Directo Flask backup
-                video.src = "https://soil-arise-alarm-numbers.trycloudflare.com/solo_directo";
-            }
-        }
+        video.addEventListener('loadeddata', () => {
+            video.muted = false;
+            video.play();
+        });
         
-        // START INMEDIATO
-        conectarOBS();
         document.addEventListener('click', () => video.muted = false);
     </script>
 </body>
