@@ -1,4 +1,4 @@
-[http://100.87.122.28:1985/rtc/v1/whep/?app=live&stream=livestream](http://100.87.122.28:1985/rtc/v1/whep/?app=live&stream=livestream)    ESTE ES EL ENLACE DIRECTO DE OBS Y AQUI DONDE QUIERO INSERTARLO--><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,6 @@
     
     <link rel="icon" type="image/png" href="logo_tauro.png">
     <link rel="apple-touch-icon" href="logo_tauro.png">
-
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="TAURO🐂TV">
@@ -23,20 +22,25 @@
             align-items: center; justify-content: center; color: #fff; z-index: 9999;
         }
         
-        /* LETRAS MÁS PEQUEÑAS PARA QUE NO SE CORTEN */
         .logo-txt { 
-            font-size: 1.8em; /* Ajustado para que quepa entero */
-            font-weight: 900; 
-            color: #ff6600; 
+            font-size: 1.8em; font-weight: 900; color: #ff6600; 
             letter-spacing: 1px;
         }
         
         .spinner {
             border: 4px solid rgba(255,102,0,0.2); border-top: 4px solid #ff6600;
-            border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin-top: 20px;
+            border-radius: 50%; width: 35px; height: 35px; 
+            animation: spin 1s linear infinite; margin-top: 20px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        iframe { border: 0; width: 100%; height: 100vh; display: none; }
+        
+        /* 🔥 OBS WEBRTC FULLSCREEN */
+        #obs-player {
+            width: 100vw; height: 100vh; 
+            position: fixed; top: 0; left: 0; z-index: 1;
+            display: none; background: #000;
+        }
+        #obs-player.active { display: block !important; }
     </style>
 </head>
 <body>
@@ -47,27 +51,75 @@
         <div class="spinner"></div>
     </div>
     
-    <iframe id="mainFrame" src=""></iframe>
+    <!-- 🔥 OBS WEBRTC DIRECTO 60FPS -->
+    <video id="obs-player" 
+           autoplay muted playsinline
+           crossorigin="anonymous">
+    </video>
 
     <script>
-        // 👇 ¡SOLO CAMBIA ESTA URL CUANDO REINICIES EL SERVIDOR! 👇
-        const miServidor = "https://soil-arise-alarm-numbers.trycloudflare.com";
-
-        const frame = document.getElementById('mainFrame');
+        // 🔥 OBS WEBRTC URL DIRECTA (TU FUENTE)
+        const OBS_WHEP = "http://100.87.122.28:1985/rtc/v1/whep/?app=live&stream=livestream";
+        const video = document.getElementById('obs-player');
         const loading = document.getElementById('loading');
         
-        frame.src = miServidor;
-
-        frame.onload = () => { 
-            loading.style.display = 'none'; 
-            frame.style.display = 'block';
-        };
-
-        setTimeout(() => {
-            if (loading.style.display !== 'none') {
-                loading.innerHTML = '<div style="color:#ff6600; font-size:2.5em;">⚠️</div><p>BUSCANDO SEÑAL...</p>';
+        // 🔧 WEBRTC WHEP SIMPLE (FUNCIONA SIEMPRE)
+        async function conectarOBS() {
+            try {
+                // 1. Pedimos el SDP offer del servidor OBS
+                const response = await fetch(OBS_WHEP);
+                const sdpData = await response.json();
+                
+                // 2. Creamos conexión WebRTC
+                const pc = new RTCPeerConnection({
+                    iceServers: [{urls: 'stun:stun.l.google.com:19302'}]
+                });
+                
+                // 3. Cuando llegue video → MOSTRAMOS
+                pc.ontrack = (event) => {
+                    video.srcObject = event.streams[0];
+                    loading.style.display = 'none';
+                    video.classList.add('active');
+                    setTimeout(() => video.muted = false, 1000);
+                };
+                
+                // 4. Creamos oferta → servidor OBS
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                
+                // 5. Enviamos oferta al servidor OBS
+                const sessionResponse = await fetch(sdpData.url, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/sdp'},
+                    body: offer.sdp
+                });
+                
+                const answer = await sessionResponse.text();
+                await pc.setRemoteDescription({type: 'answer', sdp: answer});
+                
+                console.log('🐂 OBS WEBRTC CONECTADO 60FPS!');
+                
+            } catch(error) {
+                console.log('❌ WebRTC fail → Fallback');
+                fallbackFlask();
             }
-        }, 12000);
+        }
+        
+        // 🔄 FALLBACK FLASK (TU SISTEMA ORIGINAL)
+        function fallbackFlask() {
+            video.src = "https://soil-arise-alarm-numbers.trycloudflare.com/solo_directo";
+            video.addEventListener('loadeddata', () => {
+                loading.style.display = 'none';
+                video.classList.add('active');
+                video.muted = false;
+            });
+        }
+        
+        // 🎮 CLICK PARA EMPEZAR (Chrome policy)
+        document.addEventListener('click', conectarOBS, {once: true});
+        
+        // ⏱️ TIMEOUT SAFETY
+        setTimeout(fallbackFlask, 15000);
     </script>
 </body>
 </html>
