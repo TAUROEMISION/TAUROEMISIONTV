@@ -48,71 +48,32 @@
     </div>
     
     <script>
-    // 🔴 OBS WEBRTC PLAYER TAURINO
-    const OBS_WHEP = "http://100.87.122.28:1985/rtc/v1/whep/?app=live&stream=livestream";
+    const miServidor = "https://soil-arise-alarm-numbers.trycloudflare.com";
     
+    // VIDEO SIMPLE (FUNCIONA 100%)
     const video = document.createElement('video');
-    video.id = 'obsStream';
+    video.id = 'obsVideo';
     video.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        object-fit: contain; background: #000; z-index: 1;
+        position: fixed; top: 0; left: 0; 
+        width: 100vw; height: 100vh; 
+        object-fit: contain; background: black;
     `;
     video.autoplay = true;
-    video.muted = true;
     video.playsInline = true;
+    video.crossOrigin = 'anonymous';
     document.body.appendChild(video);
     
-    const loading = document.getElementById('loading');
+    video.src = `${miServidor}/solo_directo`;
     
-    // 🔧 WebRTC WHEP Client
-    async function initWebRTC() {
-        try {
-            const response = await fetch(OBS_WHEP);
-            const { url } = await response.json();
-            
-            const peer = new RTCPeerConnection({
-                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-            });
-            
-            peer.addEventListener('track', (event) => {
-                video.srcObject = event.streams[0];
-                loading.style.display = 'none';
-                video.muted = false;
-            });
-            
-            const offer = await peer.createOffer();
-            await peer.setLocalDescription(offer);
-            
-            const session = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/sdp' },
-                body: offer.sdp
-            });
-            
-            const answer = await session.text();
-            await peer.setRemoteDescription({ type: 'answer', sdp: answer });
-            
-        } catch(e) {
-            console.log('WebRTC fail, Flask fallback');
-            fallbackFlask();
-        }
-    }
+    video.addEventListener('loadeddata', () => {
+        document.getElementById('loading').style.display = 'none';
+        video.muted = false;
+    });
     
-    // 🔄 Fallback Flask (tu actual)
-    function fallbackFlask() {
-        video.src = "https://soil-arise-alarm-numbers.trycloudflare.com/solo_directo";
-        video.addEventListener('loadeddata', () => {
-            loading.style.display = 'none';
-            video.muted = false;
-        });
-    }
-    
-    // 🎮 START
-    document.addEventListener('click', initWebRTC, {once: true});
-    
-    // ⏱️ Timeout fallback
-    setTimeout(fallbackFlask, 15000);
+    // CLICK para audio
+    document.addEventListener('click', () => video.muted = false, {once: true});
 </script>
+
 
 </body>
 </html>
