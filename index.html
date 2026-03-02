@@ -1,18 +1,63 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TAURO🐂TV</title>
-    <style>*{margin:0;background:#000;height:100vh;}video{width:100vw;height:100vh;object-fit:contain;}</style>
+    <title>TAURO🐂TV MULTI</title>
+    <style>*{margin:0;background:#000;height:100vh;}video,img{width:100vw;height:100vh;object-fit:contain;}</style>
 </head>
 <body>
-    <video src="https://soil-arise-alarm-numbers.trycloudflare.com/obs_directo" 
-           autoplay muted playsinline controls crossorigin="anonymous">
-        Tu navegador no soporta video.
-    </video>
+    <!-- Prioridad: WebRTC > FLV > RTMP > MJPEG fallback -->
+    <video id="video" autoplay muted playsinline crossorigin="anonymous" style="display:none;"></video>
+    <img id="fallback" src="https://soil-arise-alarm-numbers.trycloudflare.com/solo_directo" style="display:none;">
+    
+    <script>
+        const SERVER = 'https://soil-arise-alarm-numbers.trycloudflare.com';
+        const STREAM = 'directo';
+        const video = document.getElementById('video');
+        const fallback = document.getElementById('fallback');
+        
+        // 🔥 AUTO-DETECT MEJOR PROTOCOLO
+        async function tryWebRTC() {
+            try {
+                const pc = new RTCPeerConnection();
+                const resp = await fetch(`${SERVER}:8080/rtc/v1/play?app=live&stream=${STREAM}`);
+                const sdp = await resp.text();
+                await pc.setRemoteDescription({type: 'offer', sdp});
+                const answer = await pc.createAnswer();
+                await pc.setLocalDescription(answer);
+                
+                pc.ontrack = e => {
+                    video.srcObject = e.streams[0];
+                    video.style.display = 'block';
+                    fallback.style.display = 'none';
+                };
+                
+                return true;
+            } catch(e) {
+                return false;
+            }
+        }
+        
+        async function tryFLV() {
+            video.src = `${SERVER}:8080/live/${STREAM}.flv`;
+            video.style.display = 'block';
+            fallback.style.display = 'none';
+            video.play();
+        }
+        
+        // 🔥 START SEGÚN BROWSER
+        if (MediaSource.isTypeSupported('video/mp4; codecs="avc1.42E01E,mp4a.40.2"')) {
+            tryWebRTC().catch(() => tryFLV());
+        } else {
+            fallback.style.display = 'block';
+        }
+        
+        document.addEventListener('click', () => video.muted = false);
+    </script>
 </body>
 </html>
+
 
 
 
