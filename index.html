@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <title>TAURO🐂TV</title>
+    
     <link rel="icon" type="image/png" href="logo_tauro.png">
     <link rel="apple-touch-icon" href="logo_tauro.png">
+
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="TAURO🐂TV">
 
-    <link rel="stylesheet" href="TemplateData/style.css">
-
     <style>
-        /* ESTILO CARGADOR TAUROEMISION (DE TU SEGUNDO CODIGO) */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
         
@@ -23,36 +22,21 @@
             background: #0a0a0a; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; color: #fff; z-index: 9999;
         }
-        .logo-txt { font-size: 1.8em; font-weight: 900; color: #ff6600; letter-spacing: 1px; }
+        
+        /* LETRAS MÁS PEQUEÑAS PARA QUE NO SE CORTEN */
+        .logo-txt { 
+            font-size: 1.8em; /* Ajustado para que quepa entero */
+            font-weight: 900; 
+            color: #ff6600; 
+            letter-spacing: 1px;
+        }
+        
         .spinner {
             border: 4px solid rgba(255,102,0,0.2); border-top: 4px solid #ff6600;
             border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin-top: 20px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* ESTILO CHAT FLOTANTE REFINADO */
-        #chat-container {
-            position: fixed; top: 10px; left: 10px;
-            background-color: rgba(0, 0, 0, 0.7); padding: 10px;
-            border-radius: 10px; width: 280px; z-index: 2147483647;
-            cursor: move; border: 1px solid #ff6600; color: white;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        #button-container { display: flex; gap: 5px; margin-bottom: 5px; }
-        .btn-pwa { cursor: pointer; background: #ff6600; border: none; color: white; padding: 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
-        #chatUl { list-style-type: none; padding: 0; max-height: 140px; overflow-y: auto; font-size: 13px; border-top: 1px solid #444; margin-top: 5px; }
-        .chat-input { width: 100%; background: #222; border: 1px solid #444; color: white; margin-bottom: 4px; padding: 6px; border-radius: 4px; font-size: 12px; }
-
-        /* AJUSTES UNITY PARA PWA */
-        #unity-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
-        #unity-canvas { width: 100% !important; height: 100% !important; display: block; }
-        
-        /* BOTON FULLSCREEN FLOTANTE */
-        #custom-fullscreen {
-            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;
-            background: rgba(255,102,0,0.9); border-radius: 50%; border: 2px solid #fff;
-            z-index: 1000; cursor: pointer; display: flex; align-items: center; justify-content: center;
-        }
+        iframe { border: 0; width: 100%; height: 100vh; display: none; }
     </style>
 </head>
 <body>
@@ -62,121 +46,28 @@
         <div style="font-size: 1em; color: #ddd; margin-top: 5px;">TV LIVE</div>
         <div class="spinner"></div>
     </div>
+    
+    <iframe id="mainFrame" src=""></iframe>
 
-    <div id="chat-container">
-        <div id="button-container">
-            <button class="btn-pwa" id="toggleChatVisibility">OCULTAR CHAT</button>
-            <button class="btn-pwa" id="toggleChatForm">ESCRIBIR</button>
-        </div>
-        <div id="chat-content">
-            <div id="chat-form-box" style="display: none;">
-                <input type="text" id="nombre-pwa" class="chat-input" placeholder="Tu Nombre">
-                <textarea id="mensaje-pwa" class="chat-input" placeholder="Mensaje..."></textarea>
-                <button type="button" id="btnEnviarPWA" class="btn-pwa" style="width:100%">ENVIAR</button>
-            </div>
-            <ul id="chatUl"></ul>
-        </div>
-    </div>
-
-    <div id="unity-container">
-        <canvas id="unity-canvas" tabindex="-1"></canvas>
-    </div>
-
-    <div id="custom-fullscreen">
-        <img src="TemplateData/fullscreen-button.png" width="25" style="filter:invert(1)">
-    </div>
-
-    <script src="./Build/TAUROEMISIONGAME2WEB.loader.js"></script>
     <script>
-        const cloudflareURL = "https://icq-appeared-ago-settle.trycloudflare.com";
-        var unityInstance = null;
+        // 👇 ¡SOLO CAMBIA ESTA URL CUANDO REINICIES EL SERVIDOR! 👇
+        const miServidor = "https://icq-appeared-ago-settle.trycloudflare.com";
 
-        // Configuración con rutas para GitHub Pages
-        var config = {
-            dataUrl: "./Build/TAUROEMISIONGAME2WEB.data",
-            frameworkUrl: "./Build/TAUROEMISIONGAME2WEB.framework.js",
-            codeUrl: "./Build/TAUROEMISIONGAME2WEB.wasm",
-            streamingAssetsUrl: "StreamingAssets",
-            companyName: "DefaultCompany",
-            productName: "TAUROEMISIONGAME2",
-            productVersion: "1.0.2",
+        const frame = document.getElementById('mainFrame');
+        const loading = document.getElementById('loading');
+        
+        frame.src = miServidor;
+
+        frame.onload = () => { 
+            loading.style.display = 'none'; 
+            frame.style.display = 'block';
         };
 
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingScreen = document.getElementById("loading");
-
-        // Lanzar Unity
-        createUnityInstance(canvas, config, (progress) => {
-            // Aquí se podría poner una barra de progreso si quisieras
-        }).then((instance) => {
-            unityInstance = instance;
-            loadingScreen.style.display = "none"; // Quitamos el logo naranja cuando cargue el juego
-            
-            document.getElementById("custom-fullscreen").onclick = () => {
-                unityInstance.SetFullscreen(1);
-            };
-        }).catch((err) => {
-            console.error("Error Unity:", err);
-            // Si tarda mucho, mostramos error
-            setTimeout(() => {
-                if(loadingScreen.style.display !== 'none') {
-                    loadingScreen.innerHTML = '<p style="color:orange">REINTENTANDO CONEXIÓN...</p>';
-                }
-            }, 12000);
-        });
-
-        // LÓGICA DEL CHAT
-        const chatContent = document.getElementById('chat-content');
-        const chatForm = document.getElementById('chat-form-box');
-        const chatUl = document.getElementById('chatUl');
-
-        document.getElementById('toggleChatVisibility').onclick = function() {
-            chatContent.style.display = (chatContent.style.display === 'none') ? 'block' : 'none';
-            this.innerText = (chatContent.style.display === 'none') ? 'VER CHAT' : 'OCULTAR CHAT';
-        };
-
-        document.getElementById('toggleChatForm').onclick = function() {
-            chatForm.style.display = (chatForm.style.display === 'none') ? 'block' : 'none';
-        };
-
-        document.getElementById("btnEnviarPWA").onclick = function() {
-            const n = document.getElementById("nombre-pwa").value || "Anónimo";
-            const m = document.getElementById("mensaje-pwa").value;
-            if (m) {
-                fetch(cloudflareURL + "/chat/send", {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({name: n, message: m})
-                });
-                document.getElementById("mensaje-pwa").value = '';
+        setTimeout(() => {
+            if (loading.style.display !== 'none') {
+                loading.innerHTML = '<div style="color:#ff6600; font-size:2.5em;">⚠️</div><p>BUSCANDO SEÑAL...</p>';
             }
-        };
-
-        // Recibir mensajes cada 2 segundos
-        setInterval(function() {
-            fetch(cloudflareURL + "/chat/messages")
-            .then(r => r.json())
-            .then(data => {
-                chatUl.innerHTML = data.slice(-20).map(e => `<li><b style="color:#ff6600">${e.name}:</b> ${e.message}</li>`).join('');
-                chatUl.scrollTop = chatUl.scrollHeight;
-            }).catch(e => console.log("Servidor Cloudflare offline"));
-        }, 2000);
-
-        // DRAG & DROP PARA MOVER EL CHAT
-        let chatBox = document.getElementById('chat-container');
-        let offset = [0,0];
-        let isDown = false;
-        chatBox.addEventListener('mousedown', function(e) {
-            isDown = true;
-            offset = [chatBox.offsetLeft - e.clientX, chatBox.offsetTop - e.clientY];
-        }, true);
-        document.addEventListener('mouseup', () => { isDown = false; }, true);
-        document.addEventListener('mousemove', function(e) {
-            if (isDown) {
-                chatBox.style.left = (e.clientX + offset[0]) + 'px';
-                chatBox.style.top  = (e.clientY + offset[1]) + 'px';
-            }
-        }, true);
+        }, 12000);
     </script>
 </body>
 </html>
