@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
+    <title>TAUROEMISION LIVE</title>
+    <style>
+        /* TU CSS FLUIDO 300 LÍNEAS + CHAT REAL */
+        :root {
+            --naranja: #ff6600;
+            --fondo: #0a0a0a;
+            --panel: rgba(30, 30, 30, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100vh;
+            background: var(--fondo);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+        }
+
+        /* SCROLL FLUIDO - TU CSS ORIGINAL */
+        .contenedor {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .area-video {
+            flex-grow: 1;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .marca-agua {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* PANEL CLIPS PERFECTO */
+        .panel-clips {
+            width: 300px;
+            background: var(--panel);
+            border-left: 2px solid var(--naranja);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            z-index: 2000;
+        }
+
+        .panel-oculto {
+            transform: translateX(300px);
+            position: absolute;
+            right: 0;
+            height: 100%;
+        }
+
+        .titulo {
+            padding: 20px;
+            background: var(--naranja);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #lista-clips {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .card {
+            background: #252525;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--naranja);
+        }
+
+        .btn-x {
+            width: 100%;
+            background: var(--naranja);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* BOTONES FLOTANTES - CAMBIO: CHAT DEBAJO DEL AUDIO */
+        .btn-control {
+            position: fixed;
+            background: var(--naranja);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 50%;
+            z-index: 1000;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+        }
+
+        .btn-audio {
+            top: 15px;
+            right: 15px;
+        }
+
+        .btn-toros {
+            top: 15px;
+            right: 120px;
+        }
+
+        .btn-chat {
+            top: 70px;
+            right: 15px;
+            background: linear-gradient(45deg, #00cc00, #00ff00);
+        }
+
+        /* ← MANTENIDO EXACTO */
+        .btn-update {
+            top: 255px;
+            right: 15px;
+            background: linear-gradient(45deg, #cc6600, #ff9900);
+        }
+
+        /* TU CHAT REAL - ABAJO IZQUIERDA */
+        #chat-container {
+            display: none;
+            position: fixed;
+            bottom: 200px;
+            left: 20px;
+            width: 320px;
+            height: 220px;
+            z-index: 12000;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0);
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0);
+        }
+
+        #chat-messages {
+            height: 75%;
+            overflow-y: auto;
+            font-size: 18px;
+            border: 1px solid rgba(255, 255, 255, 0);
+            border-radius: 6px;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0);
+        }
+
+        #chat-form {
+            display: flex;
+            margin-top: 8px;
+            gap: 5px;
+        }
+
+        #chat-form input,
+        #chat-form button {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0);
+            border-radius: 6px;
+            padding: 5px;
+            color: white;
+            font-size: 20px;
+        }
+
+        #chat-form input:nth-child(1) {
+            flex: 1;
+        }
+
+        #chat-form input:nth-child(2) {
+            flex: 2;
+        }
+
+        #chat-form button#btnEnviar {
+            background: var(--naranja);
+            border: none;
+            cursor: pointer;
+        }
+
+        /* VISOR + TIRADOR */
+        #visor-repes {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+        }
+
+        #visor-repes video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .cerrar-repe {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--naranja);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 10001;
+            cursor: pointer;
+        }
+
+        .tirador {
+            position: absolute;
+            right: 300px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--naranja);
+            color: white;
+            border: none;
+            padding: 15px 8px;
+            border-radius: 5px 0 0 5px;
+            cursor: pointer;
+            transition: right 0.3s ease;
+        }
+
+        .panel-oculto-tirador {
+            right: 0;
+        }
+
+        #unity-footer {
+            position: fixed !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            z-index: 999999 !important;
+        }
+
+        #tauro-fullscreen-button {
+            transition: all 0.3s ease !important;
+        }
+
+        #tauro-fullscreen-button:hover {
+            transform: scale(1.1) !important;
+            box-shadow: 0 12px 35px rgba(0, 102, 204, 0.8) !important;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- TUS BOTONES -->
+    <button class="btn-control btn-audio" onclick="gestionarAudio()" id="btnParlante">🔈</button>
+    <button class="btn-control btn-toros" onclick="abrirJuego()">🎮 JUEGO</button>
+    <button class="btn-control btn-chat" onclick="toggleChat()" id="btnChat">💬</button>
+    <button class="btn-control btn-update" onclick="location.reload()">🔄</button>
+
+    <!-- TU AUDIO -->
+    <audio id="audio-directo-python">
+        <source src="/audio_directo" type="audio/wav">
+    </audio>
+
+    <!-- TU VISOR REPE -->
+    <div id="visor-repes">
+        <button class="cerrar-repe" onclick="cerrarPepe()">VOLVER AL DIRECTO ↩</button>
+        <video id="video-pepe" controls autoplay></video>
+    </div>
+
+    <!-- TU CHAT REAL - ABAJO IZQUIERDA -->
+    <div id="chat-container">
+        <div id="chat-messages"></div>
+        <div id="chat-form">
+            <input type="text" id="nombre" placeholder="Nombre">
+            <input type="text" id="mensaje" placeholder="Mensaje">
+            <button id="btnEnviar">ENVIAR</button>
+        </div>
+    </div>
+
+    <!-- TU CONTENIDO FLUIDO -->
+    <div class="contenedor">
+        <div class="area-video">
+            <div class="marca-agua">TAUROEMISION LIVE</div>
+            <img id="stream-img" src="/solo_directo"
+                style="width: 100%; height: 100%; object-fit: cover; background: #000;">
+        </div>
+        <div id="panel" class="panel-clips panel-oculto">
+            <div class="titulo">🔥 MOMENTOS ORO</div>
+            <div id="lista-clips">⏳ CARGANDO...</div>
+        </div>
+        <button id="btn-tira" class="tirador panel-oculto-tirador" onclick="toggle()">▶</button>
+    </div>
+
+    <script>
+        // === TUS ELEMENTOS ===
+        const audioMotor = document.getElementById('audio-directo-python');
+        const visorRepes = document.getElementById('visor-repes');
+        const videoPepe = document.getElementById('video-pepe');
+        const btnParlante = document.getElementById('btnParlante');
+
+        // === TU CHAT REAL ===
+        const chatContainer = document.getElementById('chat-container');
+        const chatMessages = document.getElementById('chat-messages');
+        const nombreInput = document.getElementById('nombre');
+        const mensajeInput = document.getElementById('mensaje');
+        const btnEnviar = document.getElementById('btnEnviar');
+
+        // === AUDIO ===
+        function gestionarAudio() {
+            if (audioMotor.paused) {
+                audioMotor.load(); audioMotor.play().then(() => {
+                    btnParlante.innerHTML = '🔊'; btnParlante.style.background = '#00ff00';
+                }).catch(e => console.log('Error audio:', e));
+            } else {
+                audioMotor.pause(); btnParlante.innerHTML = '🔈'; btnParlante.style.background = '#ff6600';
+            }
+        }
+
+        // === REPE ===
+        function verYDescargar(nombreClip) {
+            audioMotor.pause(); btnParlante.innerHTML = '🔈'; btnParlante.style.background = '#ff6600';
+            videoPepe.src = '/descargar/' + nombreClip; visorRepes.style.display = 'block';
+        }
+        function cerrarPepe() { videoPepe.pause(); visorRepes.style.display = 'none'; }
+
+        // === PANEL CLIPS ===
+        async function cargarClips() {
+            const panel = document.getElementById('panel');
+            if (panel.classList.contains('panel-oculto')) return;
+
+            try {
+                const res = await fetch('/api/clips');
+                const clips = await res.json();
+                const lista = document.getElementById('lista-clips');
+                lista.innerHTML = '';
+                if (!clips?.length) {
+                    lista.innerHTML = '<div style="color:orange;padding:20px;text-align:center">📂 CORTES VACÍO</div>';
+                } else {
+                    clips.forEach(clip => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.innerHTML = `<div style="font-size:14px;margin-bottom:10px">${clip}</div>
+                                  <button class="btn-x" onclick="verYDescargar('${clip}')">VER REPE</button>`;
+                        lista.appendChild(card);
+                    });
+                }
+            } catch (e) {
+                document.getElementById('lista-clips').innerHTML =
+                    '<div style="color:red;padding:20px">❌ SIN CONEXIÓN 🐂</div>';
+            }
+        }
+
+        function toggle() {
+            const panel = document.getElementById('panel');
+            const btn = document.getElementById('btn-tira');
+            if (panel.classList.contains('panel-oculto')) {
+                panel.classList.remove('panel-oculto'); btn.classList.remove('panel-oculto-tirador');
+                btn.style.right = '300px'; btn.innerHTML = '◀'; cargarClips();
+            } else {
+                panel.classList.add('panel-oculto'); btn.classList.add('panel-oculto-tirador');
+                btn.style.right = '0'; btn.innerHTML = '▶';
+            }
+        }
+
+        // === TU CHAT REAL - CÓDIGO EXACTO DEL INDEX-PWA ===
+        function toggleChat() {
+            if (chatContainer.style.display === 'none') {
+                chatContainer.style.display = 'block';
+                document.getElementById('btnChat').innerHTML = '❌';
+                document.getElementById('btnChat').style.background = 'linear-gradient(45deg, #cc0000, #ff0000)';
+            } else {
+                chatContainer.style.display = 'none';
+                document.getElementById('btnChat').innerHTML = '💬';
+                document.getElementById('btnChat').style.background = 'linear-gradient(45deg, #00cc00, #00ff00)';
+            }
+        }
+
+        btnEnviar.addEventListener('click', function () {
+            const nombre = nombreInput.value.trim() || 'Anónimo';
+            const mensaje = mensajeInput.value.trim();
+            if (!mensaje) return;
+
+            // TU BACKEND REAL
+            fetch('https://icq-appeared-ago-settle.trycloudflare.com/chat/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: nombre, message: mensaje })
+            });
+            mensajeInput.value = '';
+        });
+
+        // RECIBE MENSAJES GLOBALES - TU CÓDIGO REAL
+        setInterval(function () {
+            if (chatContainer.style.display === 'none') return;
+            fetch('https://icq-appeared-ago-settle.trycloudflare.com/chat/messages')
+                .then(r => r.json())
+                .then(data => {
+                    const chatMessages = document.getElementById('chat-messages');
+                    if (chatMessages) {
+                        let html = '';
+                        data.slice(-15).forEach(e => { html += `<div>${e.name}: ${e.message}</div>`; });
+                        chatMessages.innerHTML = html;
+                        chatMessages.scrollTop = 9999;
+                    }
+                });
+        }, 2000);
+
+        // JUEGO NUEVA VENTANA
+        function abrirJuego() {
+            window.open('https://tauroemision.github.io/TAUROEMISIONGAME3WEB/', 'juego_toros',
+                'fullscreen=yes,scrollbars=no,toolbar=no,menubar=no');
+        }
+
+        // 🔥 FULLSCREEN EXACTO DEL JUEGO UNITY
+        let tauroUnityInstance = {
+            SetFullscreen: function (mode) {
+                if (mode === 1) {
+                    // ENTRA FULLSCREEN (método móvil + desktop)
+                    const videoArea = document.querySelector('.area-video');
+                    const canvas = document.getElementById('stream-img');
+
+                    if (canvas.requestFullscreen) {
+                        canvas.requestFullscreen();
+                    } else if (canvas.webkitRequestFullscreen) {
+                        canvas.webkitRequestFullscreen();
+                    } else if (canvas.mozRequestFullScreen) {
+                        canvas.mozRequestFullScreen();
+                    } else {
+                        document.documentElement.requestFullscreen();
+                    }
+
+                    document.getElementById('tauro-fullscreen-button').innerHTML = '❌';
+                    document.getElementById('tauro-fullscreen-button').style.background = 'linear-gradient(45deg, #cc0000, #ff0000)';
+
+                } else {
+                    // SALE FULLSCREEN
+                    if (document.exitFullscreen) document.exitFullscreen();
+                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                    else if (document.mozCancelFullScreen) document.mozCancelFullScreen();
+
+                    document.getElementById('tauro-fullscreen-button').innerHTML = '📱';
+                    document.getElementById('tauro-fullscreen-button').style.background = 'linear-gradient(45deg, #0066cc, #00aaff)';
+                }
+            }
+        };
+
+        // 🔥 CLICK EXACTO DEL JUEGO
+        document.getElementById('tauro-fullscreen-button').onclick = function () {
+            tauroUnityInstance.SetFullscreen(1);
+        };
+
+        // 🔥 ESC sale siempre (como juego)
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && document.fullscreenElement) {
+                tauroUnityInstance.SetFullscreen(0);
+            }
+        });
+
+        // INIT
+        setInterval(cargarClips, 30000); cargarClips();
+    </script>
+
+    <script type="text/javascript" src="https://contador.websiteout.com/js/26/6/147/0"></script>
+
+    <!-- 🔥 DIV UNITY-FOOTER (exacto del juego) -->
+    <div id="unity-footer" style="position: fixed; bottom: 20px; right: 20px; z-index: 999999;">
+        <div id="tauro-fullscreen-button"
+            style="cursor: pointer; width: 70px; height: 70px; background: linear-gradient(45deg, #0066cc, #00aaff); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 8px 25px rgba(0,102,204,0.6);">
+            📱</div>
+        <div id="tauro-build-title" style="font-size: 12px; color: white; margin-top: 5px;">TAUROEMISION</div>
+    </div>
+
+</body>
+
+</html>

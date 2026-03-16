@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | TAUROEMISIONGAME2</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <style>
+        #chat-container {
+            position: fixed;
+            top: 5px;
+            left: 5px;
+            background-color: rgba(255, 255, 255, 0);
+            padding: 10px;
+            border-radius: 5px;
+            width: 300px;
+            z-index: 2147483647;
+            cursor: move;
+            user-select: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0);
+        }
+
+        #button-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        #toggleChat,
+        #toggleChatVisibility {
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        #chat-content {
+            display: none;
+            margin-top: 5px;
+        }
+
+        #chatUl {
+            list-style-type: none;
+            padding: 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chat-container">
+        <div id="button-container">
+            <button id="toggleChat">Charlar</button>
+            <button id="toggleChatVisibility">CHATonLINE</button>
+        </div>
+        <div id="chat-content">
+            <div id="chat-form">
+                <form action="">
+                    <div>
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" required>
+                    </div>
+                    <div>
+                        <label for="mensaje">Mensaje</label>
+                        <textarea id="mensaje" required></textarea>
+                    </div>
+                    <button type="button" id="btnEnviar">Enviar</button>
+                </form>
+            </div>
+            <ul id="chatUl"></ul>
+        </div>
+    </div>
+
+    <div id="unity-container" class="unity-desktop">
+        <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
+        <div id="unity-loading-bar">
+            <div id="unity-logo"></div>
+            <div id="unity-progress-bar-empty">
+                <div id="unity-progress-bar-full"></div>
+            </div>
+        </div>
+        <div id="unity-warning"> </div>
+        <div id="unity-footer">
+            <div id="unity-webgl-logo"></div>
+            <div id="unity-fullscreen-button"></div>
+            <div id="unity-build-title">TAUROEMISIONGAME2</div>
+        </div>
+    </div>
+
+    <!-- UNITY WEBGL -->
+    <script>
+        var container = document.querySelector("#unity-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingBar = document.querySelector("#unity-loading-bar");
+        var progressBarFull = document.querySelector("#unity-progress-bar-full");
+        var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+        var warningBanner = document.querySelector("#unity-warning");
+
+        function unityShowBanner(msg, type) {
+            function updateBannerVisibility() {
+                warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+            }
+            var div = document.createElement('div');
+            div.innerHTML = msg;
+            warningBanner.appendChild(div);
+            if (type == 'error') div.style = 'background: red; padding: 10px;';
+            else {
+                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+                setTimeout(function () {
+                    warningBanner.removeChild(div);
+                    updateBannerVisibility();
+                }, 5000);
+            }
+            updateBannerVisibility();
+        }
+
+        var buildUrl = "Build";
+        var loaderUrl = buildUrl + "/TAUROEMISIONGAME2WEB.loader.js";
+        var config = {
+            dataUrl: buildUrl + "/TAUROEMISIONGAME2WEB.data",
+            frameworkUrl: buildUrl + "/TAUROEMISIONGAME2WEB.framework.js",
+            codeUrl: buildUrl + "/TAUROEMISIONGAME2WEB.wasm",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "TAUROEMISIONGAME2",
+            productVersion: "1.0.2",
+            showBanner: unityShowBanner,
+        };
+
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+            var meta = document.createElement('meta');
+            meta.name = 'viewport';
+            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+            document.getElementsByTagName('head')[0].appendChild(meta);
+            container.className = "unity-mobile";
+            canvas.className = "unity-mobile";
+        } else {
+            canvas.style.width = "960px";
+            canvas.style.height = "600px";
+        }
+
+        loadingBar.style.display = "block";
+
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+                progressBarFull.style.width = 100 * progress + "%";
+            }).then((unityInstance) => {
+                loadingBar.style.display = "none";
+                fullscreenButton.onclick = () => {
+                    unityInstance.SetFullscreen(1);
+                };
+            }).catch((message) => {
+                alert(message);
+            });
+        };
+        document.body.appendChild(script);
+    </script>
+
+    <!-- 🔥 CHAT TAURINO GLOBAL (SIN FIREBASE) -->
+    <script>
+        // Elementos DOM
+        const chatContainer = document.getElementById('chat-container');
+        const txtNombre = document.getElementById("nombre");
+        const txtMensaje = document.getElementById("mensaje");
+        const btnEnviar = document.getElementById("btnEnviar");
+        const chatUl = document.getElementById("chatUl");
+        const toggleChat = document.getElementById('toggleChat');
+        const chatForm = document.getElementById('chat-form');
+        const toggleChatVisibility = document.getElementById('toggleChatVisibility');
+        const chatContent = document.getElementById('chat-content');
+        const unityContainer = document.getElementById('unity-container');
+
+        // Toggle visibilidad chat
+        toggleChatVisibility.addEventListener('click', function () {
+            if (chatContent.style.display === 'none' || chatContent.style.display === '') {
+                chatContent.style.display = 'block';
+                toggleChatVisibility.textContent = 'OCULTAR';
+            } else {
+                chatContent.style.display = 'none';
+                toggleChatVisibility.textContent = 'CHAT';
+            }
+        });
+
+        window.addEventListener('load', () => {
+            chatContent.style.display = 'block';
+            toggleChatVisibility.textContent = 'OCULTAR';
+        });
+
+        // 🔥 ENVÍO CHAT GLOBAL
+        btnEnviar.addEventListener("click", function () {
+            const nombre = txtNombre.value.trim() || "Anónimo";
+            const mensaje = txtMensaje.value.trim();
+            if (nombre && mensaje) {
+                fetch('https://icq-appeared-ago-settle.trycloudflare.com/chat/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: nombre, message: mensaje })
+                });
+                txtMensaje.value = '';
+            } else {
+                alert("Por favor completa ambos campos.");
+            }
+        });
+
+        // 🔥 RECIBIR CHAT GLOBAL (cada 2s)
+        setInterval(function () {
+            fetch('https://icq-appeared-ago-settle.trycloudflare.com/chat/messages')
+                .then(r => r.json())
+                .then(data => {
+                    let html = "";
+                    data.slice(-20).forEach(e => {
+                        html += `<li><b>${e.name}:</b> ${e.message}</li>`;
+                    });
+                    chatUl.innerHTML = html;
+                    chatUl.scrollTop = chatUl.scrollHeight;
+                });
+        }, 2000);
+
+        // Drag & Drop chat (TU CÓDIGO ORIGINAL)
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+
+        chatContainer.addEventListener('mousedown', dragStart);
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('mousemove', drag);
+
+        function dragStart(e) {
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+            if (e.target === chatContainer || e.target.closest('#chat-container')) {
+                isDragging = true;
+            }
+        }
+
+        function dragEnd(e) {
+            initialX = currentX;
+            initialY = currentY;
+            isDragging = false;
+            keepChatInContainer();
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                xOffset = currentX;
+                yOffset = currentY;
+                setTranslate(currentX, currentY, chatContainer);
+            }
+        }
+
+        function setTranslate(xPos, yPos, el) {
+            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+        }
+
+        function keepChatInContainer() {
+            const containerRect = unityContainer.getBoundingClientRect();
+            const chatRect = chatContainer.getBoundingClientRect();
+            if (chatRect.right > containerRect.right) {
+                xOffset -= chatRect.right - containerRect.right;
+            }
+            if (chatRect.left < containerRect.left) {
+                xOffset += containerRect.left - chatRect.left;
+            }
+            if (chatRect.bottom > containerRect.bottom) {
+                yOffset -= chatRect.bottom - containerRect.bottom;
+            }
+            if (chatRect.top < containerRect.top) {
+                yOffset += containerRect.top - chatRect.top;
+            }
+            setTranslate(xOffset, yOffset, chatContainer);
+        }
+
+        document.addEventListener('fullscreenchange', adjustChatPosition);
+        function adjustChatPosition() {
+            if (document.fullscreenElement) {
+                chatContainer.style.position = 'fixed';
+                chatContainer.style.zIndex = '2147483647';
+            } else {
+                chatContainer.style.position = 'absolute';
+            }
+            keepChatInContainer();
+        }
+
+        toggleChat.addEventListener('click', function () {
+            chatForm.style.display = chatForm.style.display === 'none' ? 'block' : 'none';
+        });
+
+        window.addEventListener('resize', keepChatInContainer);
+
+        // Fullscreen fix
+        document.addEventListener("fullscreenchange", () => {
+            const chat = document.getElementById("chat-container");
+            if (document.fullscreenElement) {
+                chat.style.zIndex = "999999999";
+                chat.style.position = "fixed";
+                chat.style.display = "block";
+            } else {
+                chat.style.zIndex = "999999999";
+                chat.style.position = "fixed";
+                chat.style.display = "block";
+            }
+        });
+
+        window.addEventListener("load", () => {
+            const chat = document.getElementById("chat-container");
+            chat.style.zIndex = "999999999";
+            chat.style.position = "fixed";
+        });
+    </script>
+</body>
+
+</html>
