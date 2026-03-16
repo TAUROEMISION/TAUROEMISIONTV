@@ -1,318 +1,182 @@
 <!DOCTYPE html>
-<html lang="en-us">
-
+<html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | TAUROEMISIONGAME2</title>
-    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>TAURO🐂TV</title>
+    <link rel="icon" type="image/png" href="logo_tauro.png">
+    <link rel="apple-touch-icon" href="logo_tauro.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="TAURO🐂TV">
+
     <link rel="stylesheet" href="TemplateData/style.css">
+
     <style>
+        /* ESTILO CARGADOR TAUROEMISION (DE TU SEGUNDO CODIGO) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        
+        .loading {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: #0a0a0a; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; color: #fff; z-index: 9999;
+        }
+        .logo-txt { font-size: 1.8em; font-weight: 900; color: #ff6600; letter-spacing: 1px; }
+        .spinner {
+            border: 4px solid rgba(255,102,0,0.2); border-top: 4px solid #ff6600;
+            border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin-top: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* ESTILO CHAT FLOTANTE REFINADO */
         #chat-container {
-            position: fixed;
-            top: 5px;
-            left: 5px;
-            background-color: rgba(255, 255, 255, 0);
-            padding: 10px;
-            border-radius: 5px;
-            width: 300px;
-            z-index: 2147483647;
-            cursor: move;
-            user-select: none;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0);
+            position: fixed; top: 10px; left: 10px;
+            background-color: rgba(0, 0, 0, 0.7); padding: 10px;
+            border-radius: 10px; width: 280px; z-index: 2147483647;
+            cursor: move; border: 1px solid #ff6600; color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
+        #button-container { display: flex; gap: 5px; margin-bottom: 5px; }
+        .btn-pwa { cursor: pointer; background: #ff6600; border: none; color: white; padding: 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+        #chatUl { list-style-type: none; padding: 0; max-height: 140px; overflow-y: auto; font-size: 13px; border-top: 1px solid #444; margin-top: 5px; }
+        .chat-input { width: 100%; background: #222; border: 1px solid #444; color: white; margin-bottom: 4px; padding: 6px; border-radius: 4px; font-size: 12px; }
 
-        #button-container {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-        #toggleChat,
-        #toggleChatVisibility {
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        #chat-content {
-            display: none;
-            margin-top: 5px;
-        }
-
-        #chatUl {
-            list-style-type: none;
-            padding: 0;
-            max-height: 150px;
-            overflow-y: auto;
+        /* AJUSTES UNITY PARA PWA */
+        #unity-container { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+        #unity-canvas { width: 100% !important; height: 100% !important; display: block; }
+        
+        /* BOTON FULLSCREEN FLOTANTE */
+        #custom-fullscreen {
+            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;
+            background: rgba(255,102,0,0.9); border-radius: 50%; border: 2px solid #fff;
+            z-index: 1000; cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
     </style>
 </head>
-
 <body>
+
+    <div class="loading" id="loading">
+        <div class="logo-txt">TAUROEMISION</div>
+        <div style="font-size: 1em; color: #ddd; margin-top: 5px;">TV LIVE</div>
+        <div class="spinner"></div>
+    </div>
+
     <div id="chat-container">
         <div id="button-container">
-            <button id="toggleChat">Charlar</button>
-            <button id="toggleChatVisibility">CHATonLINE</button>
+            <button class="btn-pwa" id="toggleChatVisibility">OCULTAR CHAT</button>
+            <button class="btn-pwa" id="toggleChatForm">ESCRIBIR</button>
         </div>
         <div id="chat-content">
-            <div id="chat-form">
-                <form action="">
-                    <div>
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" required>
-                    </div>
-                    <div>
-                        <label for="mensaje">Mensaje</label>
-                        <textarea id="mensaje" required></textarea>
-                    </div>
-                    <button type="button" id="btnEnviar">Enviar</button>
-                </form>
+            <div id="chat-form-box" style="display: none;">
+                <input type="text" id="nombre-pwa" class="chat-input" placeholder="Tu Nombre">
+                <textarea id="mensaje-pwa" class="chat-input" placeholder="Mensaje..."></textarea>
+                <button type="button" id="btnEnviarPWA" class="btn-pwa" style="width:100%">ENVIAR</button>
             </div>
             <ul id="chatUl"></ul>
         </div>
     </div>
 
-    <div id="unity-container" class="unity-desktop">
-        <canvas id="unity-canvas" width=960 height=600 tabindex="-1"></canvas>
-        <div id="unity-loading-bar">
-            <div id="unity-logo"></div>
-            <div id="unity-progress-bar-empty">
-                <div id="unity-progress-bar-full"></div>
-            </div>
-        </div>
-        <div id="unity-warning"> </div>
-        <div id="unity-footer">
-            <div id="unity-webgl-logo"></div>
-            <div id="unity-fullscreen-button"></div>
-            <div id="unity-build-title">TAUROEMISIONGAME2</div>
-        </div>
+    <div id="unity-container">
+        <canvas id="unity-canvas" tabindex="-1"></canvas>
     </div>
 
-    <!-- UNITY WEBGL -->
+    <div id="custom-fullscreen">
+        <img src="TemplateData/fullscreen-button.png" width="25" style="filter:invert(1)">
+    </div>
+
+    <script src="./Build/TAUROEMISIONGAME2WEB.loader.js"></script>
     <script>
-        var container = document.querySelector("#unity-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var loadingBar = document.querySelector("#unity-loading-bar");
-        var progressBarFull = document.querySelector("#unity-progress-bar-full");
-        var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-        var warningBanner = document.querySelector("#unity-warning");
+        const cloudflareURL = "https://icq-appeared-ago-settle.trycloudflare.com";
+        var unityInstance = null;
 
-        function unityShowBanner(msg, type) {
-            function updateBannerVisibility() {
-                warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-            }
-            var div = document.createElement('div');
-            div.innerHTML = msg;
-            warningBanner.appendChild(div);
-            if (type == 'error') div.style = 'background: red; padding: 10px;';
-            else {
-                if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-                setTimeout(function () {
-                    warningBanner.removeChild(div);
-                    updateBannerVisibility();
-                }, 5000);
-            }
-            updateBannerVisibility();
-        }
-
-        var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/TAUROEMISIONGAME2WEB.loader.js";
+        // Configuración con rutas para GitHub Pages
         var config = {
-            dataUrl: buildUrl + "/TAUROEMISIONGAME2WEB.data",
-            frameworkUrl: buildUrl + "/TAUROEMISIONGAME2WEB.framework.js",
-            codeUrl: buildUrl + "/TAUROEMISIONGAME2WEB.wasm",
+            dataUrl: "./Build/TAUROEMISIONGAME2WEB.data",
+            frameworkUrl: "./Build/TAUROEMISIONGAME2WEB.framework.js",
+            codeUrl: "./Build/TAUROEMISIONGAME2WEB.wasm",
             streamingAssetsUrl: "StreamingAssets",
             companyName: "DefaultCompany",
             productName: "TAUROEMISIONGAME2",
             productVersion: "1.0.2",
-            showBanner: unityShowBanner,
         };
 
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-            var meta = document.createElement('meta');
-            meta.name = 'viewport';
-            meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-            document.getElementsByTagName('head')[0].appendChild(meta);
-            container.className = "unity-mobile";
-            canvas.className = "unity-mobile";
-        } else {
-            canvas.style.width = "960px";
-            canvas.style.height = "600px";
-        }
+        var canvas = document.querySelector("#unity-canvas");
+        var loadingScreen = document.getElementById("loading");
 
-        loadingBar.style.display = "block";
+        // Lanzar Unity
+        createUnityInstance(canvas, config, (progress) => {
+            // Aquí se podría poner una barra de progreso si quisieras
+        }).then((instance) => {
+            unityInstance = instance;
+            loadingScreen.style.display = "none"; // Quitamos el logo naranja cuando cargue el juego
+            
+            document.getElementById("custom-fullscreen").onclick = () => {
+                unityInstance.SetFullscreen(1);
+            };
+        }).catch((err) => {
+            console.error("Error Unity:", err);
+            // Si tarda mucho, mostramos error
+            setTimeout(() => {
+                if(loadingScreen.style.display !== 'none') {
+                    loadingScreen.innerHTML = '<p style="color:orange">REINTENTANDO CONEXIÓN...</p>';
+                }
+            }, 12000);
+        });
 
-        var script = document.createElement("script");
-        script.src = loaderUrl;
-        script.onload = () => {
-            createUnityInstance(canvas, config, (progress) => {
-                progressBarFull.style.width = 100 * progress + "%";
-            }).then((unityInstance) => {
-                loadingBar.style.display = "none";
-                fullscreenButton.onclick = () => {
-                    unityInstance.SetFullscreen(1);
-                };
-            }).catch((message) => {
-                alert(message);
-            });
-        };
-        document.body.appendChild(script);
-    </script>
-
-    <!-- 🔥 CHAT TAURINO GLOBAL (SIN FIREBASE) -->
-    <script>
-        // Elementos DOM
-        const chatContainer = document.getElementById('chat-container');
-        const txtNombre = document.getElementById("nombre");
-        const txtMensaje = document.getElementById("mensaje");
-        const btnEnviar = document.getElementById("btnEnviar");
-        const chatUl = document.getElementById("chatUl");
-        const toggleChat = document.getElementById('toggleChat');
-        const chatForm = document.getElementById('chat-form');
-        const toggleChatVisibility = document.getElementById('toggleChatVisibility');
+        // LÓGICA DEL CHAT
         const chatContent = document.getElementById('chat-content');
-        const unityContainer = document.getElementById('unity-container');
+        const chatForm = document.getElementById('chat-form-box');
+        const chatUl = document.getElementById('chatUl');
 
-        // Toggle visibilidad chat
-        toggleChatVisibility.addEventListener('click', function () {
-            if (chatContent.style.display === 'none' || chatContent.style.display === '') {
-                chatContent.style.display = 'block';
-                toggleChatVisibility.textContent = 'OCULTAR';
-            } else {
-                chatContent.style.display = 'none';
-                toggleChatVisibility.textContent = 'CHAT';
-            }
-        });
+        document.getElementById('toggleChatVisibility').onclick = function() {
+            chatContent.style.display = (chatContent.style.display === 'none') ? 'block' : 'none';
+            this.innerText = (chatContent.style.display === 'none') ? 'VER CHAT' : 'OCULTAR CHAT';
+        };
 
-        window.addEventListener('load', () => {
-            chatContent.style.display = 'block';
-            toggleChatVisibility.textContent = 'OCULTAR';
-        });
+        document.getElementById('toggleChatForm').onclick = function() {
+            chatForm.style.display = (chatForm.style.display === 'none') ? 'block' : 'none';
+        };
 
-        // 🔥 ENVÍO CHAT GLOBAL
-        btnEnviar.addEventListener("click", function () {
-            const nombre = txtNombre.value.trim() || "Anónimo";
-            const mensaje = txtMensaje.value.trim();
-            if (nombre && mensaje) {
-                fetch('https://icq-appeared-ago-settle.trycloudflare.com/chat/send', {
+        document.getElementById("btnEnviarPWA").onclick = function() {
+            const n = document.getElementById("nombre-pwa").value || "Anónimo";
+            const m = document.getElementById("mensaje-pwa").value;
+            if (m) {
+                fetch(cloudflareURL + "/chat/send", {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: nombre, message: mensaje })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name: n, message: m})
                 });
-                txtMensaje.value = '';
-            } else {
-                alert("Por favor completa ambos campos.");
+                document.getElementById("mensaje-pwa").value = '';
             }
-        });
+        };
 
-        // 🔥 RECIBIR CHAT GLOBAL (cada 2s)
-        setInterval(function () {
-            fetch('https://icq-appeared-ago-settle.trycloudflare.com/chat/messages')
-                .then(r => r.json())
-                .then(data => {
-                    let html = "";
-                    data.slice(-20).forEach(e => {
-                        html += `<li><b>${e.name}:</b> ${e.message}</li>`;
-                    });
-                    chatUl.innerHTML = html;
-                    chatUl.scrollTop = chatUl.scrollHeight;
-                });
+        // Recibir mensajes cada 2 segundos
+        setInterval(function() {
+            fetch(cloudflareURL + "/chat/messages")
+            .then(r => r.json())
+            .then(data => {
+                chatUl.innerHTML = data.slice(-20).map(e => `<li><b style="color:#ff6600">${e.name}:</b> ${e.message}</li>`).join('');
+                chatUl.scrollTop = chatUl.scrollHeight;
+            }).catch(e => console.log("Servidor Cloudflare offline"));
         }, 2000);
 
-        // Drag & Drop chat (TU CÓDIGO ORIGINAL)
-        let isDragging = false;
-        let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
-
-        chatContainer.addEventListener('mousedown', dragStart);
-        document.addEventListener('mouseup', dragEnd);
-        document.addEventListener('mousemove', drag);
-
-        function dragStart(e) {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-            if (e.target === chatContainer || e.target.closest('#chat-container')) {
-                isDragging = true;
+        // DRAG & DROP PARA MOVER EL CHAT
+        let chatBox = document.getElementById('chat-container');
+        let offset = [0,0];
+        let isDown = false;
+        chatBox.addEventListener('mousedown', function(e) {
+            isDown = true;
+            offset = [chatBox.offsetLeft - e.clientX, chatBox.offsetTop - e.clientY];
+        }, true);
+        document.addEventListener('mouseup', () => { isDown = false; }, true);
+        document.addEventListener('mousemove', function(e) {
+            if (isDown) {
+                chatBox.style.left = (e.clientX + offset[0]) + 'px';
+                chatBox.style.top  = (e.clientY + offset[1]) + 'px';
             }
-        }
-
-        function dragEnd(e) {
-            initialX = currentX;
-            initialY = currentY;
-            isDragging = false;
-            keepChatInContainer();
-        }
-
-        function drag(e) {
-            if (isDragging) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-                xOffset = currentX;
-                yOffset = currentY;
-                setTranslate(currentX, currentY, chatContainer);
-            }
-        }
-
-        function setTranslate(xPos, yPos, el) {
-            el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
-        }
-
-        function keepChatInContainer() {
-            const containerRect = unityContainer.getBoundingClientRect();
-            const chatRect = chatContainer.getBoundingClientRect();
-            if (chatRect.right > containerRect.right) {
-                xOffset -= chatRect.right - containerRect.right;
-            }
-            if (chatRect.left < containerRect.left) {
-                xOffset += containerRect.left - chatRect.left;
-            }
-            if (chatRect.bottom > containerRect.bottom) {
-                yOffset -= chatRect.bottom - containerRect.bottom;
-            }
-            if (chatRect.top < containerRect.top) {
-                yOffset += containerRect.top - chatRect.top;
-            }
-            setTranslate(xOffset, yOffset, chatContainer);
-        }
-
-        document.addEventListener('fullscreenchange', adjustChatPosition);
-        function adjustChatPosition() {
-            if (document.fullscreenElement) {
-                chatContainer.style.position = 'fixed';
-                chatContainer.style.zIndex = '2147483647';
-            } else {
-                chatContainer.style.position = 'absolute';
-            }
-            keepChatInContainer();
-        }
-
-        toggleChat.addEventListener('click', function () {
-            chatForm.style.display = chatForm.style.display === 'none' ? 'block' : 'none';
-        });
-
-        window.addEventListener('resize', keepChatInContainer);
-
-        // Fullscreen fix
-        document.addEventListener("fullscreenchange", () => {
-            const chat = document.getElementById("chat-container");
-            if (document.fullscreenElement) {
-                chat.style.zIndex = "999999999";
-                chat.style.position = "fixed";
-                chat.style.display = "block";
-            } else {
-                chat.style.zIndex = "999999999";
-                chat.style.position = "fixed";
-                chat.style.display = "block";
-            }
-        });
-
-        window.addEventListener("load", () => {
-            const chat = document.getElementById("chat-container");
-            chat.style.zIndex = "999999999";
-            chat.style.position = "fixed";
-        });
+        }, true);
     </script>
 </body>
-
 </html>
