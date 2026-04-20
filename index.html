@@ -55,15 +55,13 @@
     <iframe id="mainFrame" src="" allow="autoplay; fullscreen; microphone; camera;"></iframe>
 
     <script>
-        
-        const _0x4a2 = ["b3Jn", "ZHVja2Rucw==", "dGF1cm9lbWlzaW9u", "aHR0cHM6Ly8="]; 
+        const _0x4a2 = ["b3JnOjUwMDA=", "ZHVja2Rucw==", "dGF1cm9lbWlzaW9u", "aHR0cHM6Ly8="]; 
 
-        function obtenerRuedo() {
-            // Reconstruye: https:// + tauroemision + . + duckdns + . + org
+        function contadorplayer() {
             return atob(_0x4a2[3]) + atob(_0x4a2[2]) + "." + atob(_0x4a2[1]) + "." + atob(_0x4a2[0]);
         }
 
-        const miFortaleza = obtenerRuedo();
+        const miFortaleza = contadorplayer();
         const frame = document.getElementById('mainFrame');
         const loading = document.getElementById('loading');
         const btnEntrar = document.getElementById('btn-entrar');
@@ -86,7 +84,7 @@
 
         setTimeout(() => {
             if (loading.style.display !== 'none' && btnEntrar.style.display === 'none') {
-                loading.innerHTML = '<div style="color:#ff0000; font-size:2.5em;">🐂</div><p style="margin-top:10px;">PREPARANDO EL RUEDO...</p>';
+                loading.innerHTML = '<div style="color:#ff0000; font-size:2.5em;">🐂</div><p style="margin-top:10px;">BUSCANDO SEÑAL...</p>';
             }
         }, 12000);
 
