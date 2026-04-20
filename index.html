@@ -2,92 +2,49 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAUROEMISIONTV</title>
-    
-    <link rel="icon" type="image/png" href="logo_tauro.png">
-    <link rel="apple-touch-icon" href="logo_tauro.png">
-
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { height: 100%; width: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        body, html { height: 100%; width: 100%; margin: 0; background: #000; font-family: sans-serif; display: flex; align-items: center; justify-content: center; color: white; overflow: hidden; }
+        .portada { text-align: center; }
+        .logo-txt { font-size: 2.5em; font-weight: 900; color: #ff0000; letter-spacing: 2px; margin-bottom: 20px; text-shadow: 0 0 15px rgba(255,0,0,0.6); }
         
-        .loading {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: #000; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; color: #fff; z-index: 9999;
-        }
-        
-        .logo-txt { font-size: 2.2em; font-weight: 900; color: #ff0000; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,0,0,0.5); }
-        .spinner { border: 4px solid rgba(255,0,0,0.1); border-top: 4px solid #ff0000; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin-top: 25px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        #mainFrame { border: 0; width: 100vw; height: 100vh; display: none; position: absolute; top: 0; left: 0; }
-
-        #btn-entrar {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #ff0000; color: white; border: none; padding: 20px 40px;
-            border-radius: 50px; font-weight: bold; font-size: 1.2em; cursor: pointer;
-            z-index: 10001; display: none; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-            animation: pulse 2s infinite;
+        #btn-lanzar {
+            background: #ff0000; color: white; border: none; padding: 25px 50px;
+            border-radius: 50px; font-weight: bold; font-size: 1.3em; cursor: pointer;
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.5); animation: pulse 2s infinite;
+            text-transform: uppercase;
         }
 
         @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(0.95); }
-            70% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
-            100% { transform: translate(-50%, -50%) scale(0.95); }
+            0% { transform: scale(0.95); }
+            70% { transform: scale(1); box-shadow: 0 0 40px rgba(255, 0, 0, 0.7); }
+            100% { transform: scale(0.95); }
         }
     </style>
 </head>
 <body>
 
-    <div class="loading" id="loading">
+    <div class="portada">
         <div class="logo-txt">TAUROEMISION</div>
-        <div style="font-size: 1em; color: #fff; margin-top: 5px; opacity: 0.8;">PUERTA GRANDE 2026</div>
-        <div class="spinner"></div>
+        <p style="margin-bottom: 30px; opacity: 0.8;">TEMPORADA 2026 - VIVO</p>
+        <button id="btn-lanzar" onclick="embestir()">ENTRAR AL RUEDO 📺</button>
     </div>
-    
-    <button id="btn-entrar" onclick="abrirPlaza()">ENTRAR AL DIRECTO 📺</button>
-
-    <iframe id="mainFrame" src="" allow="autoplay; fullscreen; microphone; camera;"></iframe>
 
     <script>
+        
         const _0x4a2 = ["b3JnOjUwMDA=", "ZHVja2Rucw==", "dGF1cm9lbWlzaW9u", "aHR0cHM6Ly8="]; 
 
         function contadorplayer() {
             return atob(_0x4a2[3]) + atob(_0x4a2[2]) + "." + atob(_0x4a2[1]) + "." + atob(_0x4a2[0]);
         }
 
-        const miFortaleza = contadorplayer();
-        const frame = document.getElementById('mainFrame');
-        const loading = document.getElementById('loading');
-        const btnEntrar = document.getElementById('btn-entrar');
-        
-        frame.src = miFortaleza;
-
-        frame.onload = () => { 
-            loading.style.display = 'none'; 
-            btnEntrar.style.display = 'block'; 
-        };
-
-        function abrirPlaza() {
-            frame.style.display = 'block';
-            btnEntrar.style.display = 'none';
-
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) { elem.requestFullscreen(); } 
-            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+        function embestir() {
+            const destino = contadorplayer();
+            window.location.href = destino;
         }
 
-        setTimeout(() => {
-            if (loading.style.display !== 'none' && btnEntrar.style.display === 'none') {
-                loading.innerHTML = '<div style="color:#ff0000; font-size:2.5em;">🐂</div><p style="margin-top:10px;">BUSCANDO SEÑAL...</p>';
-            }
-        }, 12000);
-
+        // Bloqueo de seguridad básico
         document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
