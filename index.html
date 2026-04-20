@@ -2,56 +2,69 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAUROEMISIONTV</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; width: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
         .loading { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; z-index: 9999; }
-        .logo-txt { font-size: 2.2em; font-weight: 900; color: #ff0000; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,0,0,0.5); }
-        .spinner { border: 4px solid rgba(255,0,0,0.1); border-top: 4px solid #ff0000; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin-top: 25px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #mainFrame { border: 0; width: 100vw; height: 100vh; display: none; position: absolute; top: 0; left: 0; }
-        #btn-entrar { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ff0000; color: white; border: none; padding: 20px 40px; border-radius: 50px; font-weight: bold; font-size: 1.2em; cursor: pointer; z-index: 10001; display: none; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.95); } 70% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); } 100% { transform: translate(-50%, -50%) scale(0.95); } }
+        .logo-txt { font-size: 2.2em; font-weight: 900; color: #ff0000; letter-spacing: 2px; }
+        #btn-entrar { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ff0000; color: white; border: none; padding: 20px 40px; border-radius: 50px; font-weight: bold; font-size: 1.2em; cursor: pointer; z-index: 10001; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); }
     </style>
 </head>
 <body>
 
     <div class="loading" id="loading">
         <div class="logo-txt">TAUROEMISION</div>
-        <div style="font-size: 1em; color: #fff; margin-top: 5px; opacity: 0.8;">PUERTA GRANDE 2026</div>
-        <div class="spinner"></div>
+        <div style="margin-top: 10px; opacity: 0.7;">CARGANDO PLAZA...</div>
     </div>
     
-    <button id="btn-entrar">ENTRAR AL DIRECTO 📺</button>
-    <iframe id="mainFrame" src="" allow="autoplay; fullscreen; microphone; camera;"></iframe>
+    <button id="btn-entrar" style="display:none;">ENTRAR AL DIRECTO 📺</button>
+    <iframe id="mainFrame" src="about:blank" allow="autoplay; fullscreen;"></iframe>
 
     <script>
         (function() {
-            const _0x = ["b3JnOjUwMDA=", "ZHVja2Rucw==", "dGF1cm9lbWlzaW9u", "aHR0cHM6Ly8="];
-            const f = document.getElementById('mainFrame');
-            const l = document.getElementById('loading');
-            const b = document.getElementById('btn-entrar');
-
-            const s = atob(_0x[3]) + atob(_0x[2]) + "." + atob(_0x[1]) + "." + atob(_0x[0]);
             
-            f.src = s;
+            const p1 = "MDAwNTpncmlvLnNuZGtjdWQubm9pc2ltZW9ydWF0"; 
+            const p2 = "Ly86c3B0dGg=";
 
-            f.onload = () => { 
-                l.style.display = 'none'; 
-                b.style.display = 'block'; 
-                console.clear(); 
-            };
+            const decode = (str) => atob(str).split("").reverse().join("");
+            const s = decode(p2) + decode(p1);
+            
+            const f = document.getElementById('mainFrame');
+            const b = document.getElementById('btn-entrar');
+            const l = document.getElementById('loading');
+
+            
+            setTimeout(() => {
+                l.style.display = 'none';
+                b.style.display = 'block';
+            }, 2000);
+
             b.onclick = function() {
+                
+                f.src = s; 
                 f.style.display = 'block';
+                f.style.width = '100vw';
+                f.style.height = '100vh';
                 b.style.display = 'none';
+                
                 const e = document.documentElement;
                 if (e.requestFullscreen) e.requestFullscreen();
-                else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
             };
+
+            
+            setInterval(() => {
+                const antes = new Date().getTime();
+                debugger; 
+                const despues = new Date().getTime();
+                if (despues - antes > 100) {
+                    document.body.innerHTML = "¡CUIDADO! ACCESO NO AUTORIZADO.";
+                    window.location.href = "https://www.google.com";
+                }
+            }, 1000);
+
             document.addEventListener('contextmenu', e => e.preventDefault());
-            document.onkeydown = e => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false; };
         })();
     </script>
 </body>
