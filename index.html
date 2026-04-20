@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=yes">
-    
     <title>TAUROEMISIONTV</title>
     
     <link rel="icon" type="image/png" href="logo_tauro.png">
@@ -18,23 +17,28 @@
         
         .loading {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: #0a0a0a; display: flex; flex-direction: column; 
+            background: #000; display: flex; flex-direction: column; 
             align-items: center; justify-content: center; color: #fff; z-index: 9999;
         }
         
-        .logo-txt { font-size: 1.8em; font-weight: 900; color: #ff6600; letter-spacing: 1px; }
-        .spinner { border: 4px solid rgba(255,102,0,0.2); border-top: 4px solid #ff6600; border-radius: 50%; width: 35px; height: 35px; animation: spin 1s linear infinite; margin-top: 20px; }
+        .logo-txt { font-size: 2.2em; font-weight: 900; color: #ff0000; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,0,0,0.5); }
+        .spinner { border: 4px solid rgba(255,0,0,0.1); border-top: 4px solid #ff0000; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin-top: 25px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* EL IFRAME AHORA ES TOTAL */
-        #mainFrame { border: 0; width: 100vw; height: 100vh; display: none; }
+        #mainFrame { border: 0; width: 100vw; height: 100vh; display: none; position: absolute; top: 0; left: 0; }
 
-        /* EL BOTÓN PARA PONERLO COMO EL JUEGO */
-        #btn-full {
-            position: fixed; bottom: 20px; right: 20px;
-            background: #ff6600; color: white; border: none;
-            padding: 15px; border-radius: 50%; z-index: 10000;
-            display: none; font-size: 20px; box-shadow: 0 0 10px #000;
+        #btn-entrar {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #ff0000; color: white; border: none; padding: 20px 40px;
+            border-radius: 50px; font-weight: bold; font-size: 1.2em; cursor: pointer;
+            z-index: 10001; display: none; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(0.95); }
+            70% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
+            100% { transform: translate(-50%, -50%) scale(0.95); }
         }
     </style>
 </head>
@@ -42,41 +46,51 @@
 
     <div class="loading" id="loading">
         <div class="logo-txt">TAUROEMISION</div>
-        <div style="font-size: 1em; color: #ddd; margin-top: 5px;">TV LIVE</div>
+        <div style="font-size: 1em; color: #fff; margin-top: 5px; opacity: 0.8;">PUERTA GRANDE 2026</div>
         <div class="spinner"></div>
     </div>
     
-    <button id="btn-full" onclick="ponloFull()">📺</button>
+    <button id="btn-entrar" onclick="abrirPlaza()">ENTRAR AL DIRECTO 📺</button>
 
-    <iframe id="mainFrame" src="" allow="autoplay; fullscreen"></iframe>
+    <iframe id="mainFrame" src="" allow="autoplay; fullscreen; microphone; camera;"></iframe>
 
     <script>
-        const miServidor = "https://que-baseball-schools-varying.trycloudflare.com";
+        
+        const _0x4a2 = ["b3Jn", "ZHVja2Rucw==", "dGF1cm9lbWlzaW9u", "aHR0cHM6Ly8="]; 
+
+        function obtenerRuedo() {
+            // Reconstruye: https:// + tauroemision + . + duckdns + . + org
+            return atob(_0x4a2[3]) + atob(_0x4a2[2]) + "." + atob(_0x4a2[1]) + "." + atob(_0x4a2[0]);
+        }
+
+        const miFortaleza = obtenerRuedo();
         const frame = document.getElementById('mainFrame');
         const loading = document.getElementById('loading');
-        const btn = document.getElementById('btn-full');
+        const btnEntrar = document.getElementById('btn-entrar');
         
-        frame.src = miServidor;
+        frame.src = miFortaleza;
 
         frame.onload = () => { 
             loading.style.display = 'none'; 
-            frame.style.display = 'block';
-            btn.style.display = 'block'; // Mostramos el botón para forzar el Full
+            btnEntrar.style.display = 'block'; 
         };
 
-        function ponloFull() {
-            if (frame.requestFullscreen) {
-                frame.requestFullscreen();
-            } else if (frame.webkitRequestFullscreen) {
-                frame.webkitRequestFullscreen();
-            }
+        function abrirPlaza() {
+            frame.style.display = 'block';
+            btnEntrar.style.display = 'none';
+
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) { elem.requestFullscreen(); } 
+            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
         }
 
         setTimeout(() => {
-            if (loading.style.display !== 'none') {
-                loading.innerHTML = '<div style="color:#ff6600; font-size:2.5em;">⚠️</div><p>BUSCANDO SEÑAL...</p>';
+            if (loading.style.display !== 'none' && btnEntrar.style.display === 'none') {
+                loading.innerHTML = '<div style="color:#ff0000; font-size:2.5em;">🐂</div><p style="margin-top:10px;">PREPARANDO EL RUEDO...</p>';
             }
         }, 12000);
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
     </script>
 </body>
 </html>
