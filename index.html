@@ -4,42 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=yes">
     <title>TAUROEMISIONTV</title>
-    
-    <link rel="icon" type="image/png" href="logo_tauro.png">
-    <link rel="apple-touch-icon" href="logo_tauro.png">
-
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; width: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
-        
-        .loading {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: #000; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center; color: #fff; z-index: 9999;
-        }
-        
+        .loading { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; z-index: 9999; }
         .logo-txt { font-size: 2.2em; font-weight: 900; color: #ff0000; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,0,0,0.5); }
         .spinner { border: 4px solid rgba(255,0,0,0.1); border-top: 4px solid #ff0000; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin-top: 25px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         #mainFrame { border: 0; width: 100vw; height: 100vh; display: none; position: absolute; top: 0; left: 0; }
-
-        #btn-entrar {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #ff0000; color: white; border: none; padding: 20px 40px;
-            border-radius: 50px; font-weight: bold; font-size: 1.2em; cursor: pointer;
-            z-index: 10001; display: none; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(0.95); }
-            70% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); }
-            100% { transform: translate(-50%, -50%) scale(0.95); }
-        }
+        #btn-entrar { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ff0000; color: white; border: none; padding: 20px 40px; border-radius: 50px; font-weight: bold; font-size: 1.2em; cursor: pointer; z-index: 10001; display: none; box-shadow: 0 0 20px rgba(255, 0, 0, 0.4); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(0.95); } 70% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 30px rgba(255, 0, 0, 0.6); } 100% { transform: translate(-50%, -50%) scale(0.95); } }
     </style>
 </head>
 <body>
@@ -50,47 +24,35 @@
         <div class="spinner"></div>
     </div>
     
-    <button id="btn-entrar" onclick="abrirPlaza()">ENTRAR AL DIRECTO 📺</button>
-
+    <button id="btn-entrar">ENTRAR AL DIRECTO 📺</button>
     <iframe id="mainFrame" src="" allow="autoplay; fullscreen; microphone; camera;"></iframe>
 
     <script>
-        // --- CRIPTOGRAFÍA DE LA FORTALEZA DEFINITIVA (PUERTO 5000) ---
-        // Codificado: https:// + tauroemision + . + duckdns + . + org:5000
-        const _0x4a2 = ["b3JnOjUwMDA=", "ZHVja2Rucw==", "dGF1cm9lbWlzaW9u", "aHR0cHM6Ly8="]; 
+        (function() {
+            const _0x = ["b3JnOjUwMDA=", "ZHVja2Rucw==", "dGF1cm9lbWlzaW9u", "aHR0cHM6Ly8="];
+            const f = document.getElementById('mainFrame');
+            const l = document.getElementById('loading');
+            const b = document.getElementById('btn-entrar');
 
-        function obtenerRuedo() {
-            return atob(_0x4a2[3]) + atob(_0x4a2[2]) + "." + atob(_0x4a2[1]) + "." + atob(_0x4a2[0]);
-        }
+            const s = atob(_0x[3]) + atob(_0x[2]) + "." + atob(_0x[1]) + "." + atob(_0x[0]);
+            
+            f.src = s;
 
-        const miFortaleza = obtenerRuedo();
-        const frame = document.getElementById('mainFrame');
-        const loading = document.getElementById('loading');
-        const btnEntrar = document.getElementById('btn-entrar');
-        
-        frame.src = miFortaleza;
-
-        frame.onload = () => { 
-            loading.style.display = 'none'; 
-            btnEntrar.style.display = 'block'; 
-        };
-
-        function abrirPlaza() {
-            frame.style.display = 'block';
-            btnEntrar.style.display = 'none';
-
-            const elem = document.documentElement;
-            if (elem.requestFullscreen) { elem.requestFullscreen(); } 
-            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
-        }
-
-        setTimeout(() => {
-            if (loading.style.display !== 'none' && btnEntrar.style.display === 'none') {
-                loading.innerHTML = '<div style="color:#ff0000; font-size:2.5em;">🐂</div><p style="margin-top:10px;">BUSCANDO SEÑAL...</p>';
-            }
-        }, 12000);
-
-        document.addEventListener('contextmenu', e => e.preventDefault());
+            f.onload = () => { 
+                l.style.display = 'none'; 
+                b.style.display = 'block'; 
+                console.clear(); 
+            };
+            b.onclick = function() {
+                f.style.display = 'block';
+                b.style.display = 'none';
+                const e = document.documentElement;
+                if (e.requestFullscreen) e.requestFullscreen();
+                else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
+            };
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.onkeydown = e => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false; };
+        })();
     </script>
 </body>
 </html>
