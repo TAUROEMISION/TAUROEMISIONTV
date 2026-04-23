@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TAUROEMISIONTV - ENTRADA</title>
+    <title>TAUROEMISIONTV</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; width: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
@@ -14,7 +14,6 @@
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            text-align: center;
         }
 
         .logo-txt { 
@@ -22,35 +21,26 @@
             font-weight: 900; 
             color: #ff0000; 
             letter-spacing: 2px; 
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             text-shadow: 0 0 15px rgba(255,0,0,0.6); 
         }
 
-        /* EL BOTÓN MAESTRO */
         .btn-entrada {
             background: #ff0000;
             color: white;
             border: none;
-            padding: 20px 40px;
-            font-size: 1.5em;
+            padding: 25px 50px;
+            font-size: 1.6em;
             font-weight: bold;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(255,0,0,0.4);
-            animation: latido 1.5s infinite;
+            box-shadow: 0 0 20px rgba(255,0,0,0.5);
             text-transform: uppercase;
+            transition: transform 0.2s;
         }
 
-        @keyframes latido {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,0,0,0.4); }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,0,0,0.8); }
-            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,0,0,0.4); }
-        }
-
-        .instruccion {
-            color: #666;
-            margin-top: 15px;
-            font-size: 0.9em;
+        .btn-entrada:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -59,33 +49,18 @@
     <div class="contenedor-entrada">
         <div class="logo-txt">TAUROEMISION</div>
         
-        <button class="btn-entrada" onclick="entrarAPlaza()">📺 ENTRAR AL DIRECTO</button>
-        
-        <div class="instruccion">Pulsa para ver en pantalla completa</div>
+        <button class="btn-entrada" onclick="entrar()">📺 ENTRAR</button>
     </div>
 
     <script>
-        const TARGET_URL = "https://tauroemision.duckdns.org:5000/";
-
-        function entrarAPlaza() {
-            // 1. Intentar poner la pantalla completa en GitHub antes de irse
-            // (Esto prepara al navegador para que la siguiente página pueda heredar el estado)
+        function entrar() {
+            // Intentamos el Full Screen pero SIN esperar a que termine para no bloquear el salto
             const elem = document.documentElement;
-            const metodos = [
-                elem.requestFullscreen, 
-                elem.webkitRequestFullscreen, 
-                elem.mozRequestFullScreen, 
-                elem.msRequestFullscreen
-            ];
+            if (elem.requestFullscreen) { elem.requestFullscreen().catch(()=>{}); }
+            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen().catch(()=>{}); }
 
-            metodos.forEach(metodo => {
-                if (metodo) metodo.call(elem).catch(() => {});
-            });
-
-            // 2. Esperar un suspiro para que el FullScreen se active y saltar
-            setTimeout(() => {
-                window.location.href = TARGET_URL;
-            }, 100);
+            // Salto inmediato a la plaza
+            window.location.href = "https://tauroemision.duckdns.org:5000/";
         }
     </script>
 
