@@ -2,82 +2,91 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=yes">
-    <title>TAUROEMISIONTV</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TAUROEMISIONTV - ENTRADA</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body, html { height: 100%; width: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
-        .loading { 
-            position: fixed; 
-            top: 0; left: 0; right: 0; bottom: 0; 
-            background: #000; 
+        
+        .contenedor-entrada { 
+            height: 100vh; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            color: #fff; 
-            z-index: 9999; 
+            text-align: center;
         }
+
         .logo-txt { 
-            font-size: 2.2em; 
+            font-size: 2.5em; 
             font-weight: 900; 
             color: #ff0000; 
             letter-spacing: 2px; 
-            text-shadow: 0 0 10px rgba(255,0,0,0.5); 
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px rgba(255,0,0,0.6); 
         }
-        .sub-txt { 
-            font-size: 1em; 
-            color: #fff; 
-            margin-top: 5px; 
-            opacity: 0.8; 
+
+        /* EL BOTÓN MAESTRO */
+        .btn-entrada {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255,0,0,0.4);
+            animation: latido 1.5s infinite;
+            text-transform: uppercase;
         }
-        .spinner { 
-            border: 4px solid rgba(255,0,0,0.1); 
-            border-top: 4px solid #ff0000; 
-            border-radius: 50%; 
-            width: 45px; 
-            height: 45px; 
-            animation: spin 1s linear infinite; 
-            margin-top: 25px; 
+
+        @keyframes latido {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,0,0,0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,0,0,0.8); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,0,0,0.4); }
         }
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
+
+        .instruccion {
+            color: #666;
+            margin-top: 15px;
+            font-size: 0.9em;
         }
     </style>
 </head>
 <body>
 
-    <div class="loading">
+    <div class="contenedor-entrada">
         <div class="logo-txt">TAUROEMISION</div>
-        <div class="sub-txt">PUERTA GRANDE 2026</div>
-        <div class="spinner"></div>
+        
+        <button class="btn-entrada" onclick="entrarAPlaza()">📺 ENTRAR AL DIRECTO</button>
+        
+        <div class="instruccion">Pulsa para ver en pantalla completa</div>
     </div>
 
     <script>
-        // --- URL de tu index real (sin /index, sirve el index.html por defecto) ---
         const TARGET_URL = "https://tauroemision.duckdns.org:5000/";
 
-        // --- Intentar ir a pantalla completa al cargar ---
-        function tryFullscreen() {
+        function entrarAPlaza() {
+            // 1. Intentar poner la pantalla completa en GitHub antes de irse
+            // (Esto prepara al navegador para que la siguiente página pueda heredar el estado)
             const elem = document.documentElement;
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen().catch(() => {}); // ignorar error si el navegador lo bloquea
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen().catch(() => {});
-            }
-        }
+            const metodos = [
+                elem.requestFullscreen, 
+                elem.webkitRequestFullscreen, 
+                elem.mozRequestFullScreen, 
+                elem.msRequestFullscreen
+            ];
 
-        // --- Redirigir al index real ---
-        function redirigir() {
-            window.location.href = TARGET_URL;
-        }
+            metodos.forEach(metodo => {
+                if (metodo) metodo.call(elem).catch(() => {});
+            });
 
-        // --- En muchos móviles esto se acepta como "gesto" y permite fullscreen al cargar ---
-        setTimeout(() => {
-            tryFullscreen();
-            redirigir();
-        }, 500);
+            // 2. Esperar un suspiro para que el FullScreen se active y saltar
+            setTimeout(() => {
+                window.location.href = TARGET_URL;
+            }, 100);
+        }
     </script>
 
 </body>
