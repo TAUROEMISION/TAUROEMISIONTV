@@ -1,157 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=yes">
     <title>TAUROEMISIONTV</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { height: 100%; width: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        .loading { 
+            position: fixed; 
+            top: 0; left: 0; right: 0; bottom: 0; 
+            background: #000; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            color: #fff; 
+            z-index: 9999; 
         }
-
-        body,
-        html {
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background: #000;
-            font-family: sans-serif;
+        .logo-txt { 
+            font-size: 2.2em; 
+            font-weight: 900; 
+            color: #ff0000; 
+            letter-spacing: 2px; 
+            text-shadow: 0 0 10px rgba(255,0,0,0.5); 
         }
-
-        .loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            z-index: 9999;
+        .sub-txt { 
+            font-size: 1em; 
+            color: #fff; 
+            margin-top: 5px; 
+            opacity: 0.8; 
         }
-
-        .logo-txt {
-            font-size: 2.2em;
-            font-weight: 900;
-            color: #ff0000;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        .spinner { 
+            border: 4px solid rgba(255,0,0,0.1); 
+            border-top: 4px solid #ff0000; 
+            border-radius: 50%; 
+            width: 45px; 
+            height: 45px; 
+            animation: spin 1s linear infinite; 
+            margin-top: 25px; 
         }
-
-        .spinner {
-            border: 4px solid rgba(255, 0, 0, 0.1);
-            border-top: 4px solid #ff0000;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            animation: spin 1s linear infinite;
-            margin-top: 25px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        #mainFrame {
-            border: 0;
-            width: 100vw;
-            height: 100vh;
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        #btn-entrar {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #ff0000;
-            color: white;
-            border: none;
-            padding: 20px 40px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.2em;
-            cursor: pointer;
-            z-index: 10001;
-            display: none;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: translate(-50%, -50%) scale(0.95);
-            }
-
-            70% {
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 0 0 30px rgba(255, 0, 0, 0.6);
-            }
-
-            100% {
-                transform: translate(-50%, -50%) scale(0.95);
-            }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
         }
     </style>
 </head>
-
 <body>
 
-    <div class="loading" id="loading">
+    <div class="loading">
         <div class="logo-txt">TAUROEMISION</div>
-        <div style="font-size: 1em; color: #fff; margin-top: 5px; opacity: 0.8;">PUERTA GRANDE 2026</div>
+        <div class="sub-txt">PUERTA GRANDE 2026</div>
         <div class="spinner"></div>
     </div>
 
-    <button id="btn-entrar">ENTRAR AL DIRECTO 📺</button>
-    <iframe id="mainFrame" src="" allow="autoplay; fullscreen; microphone; camera;"></iframe>
-
     <script>
+        // --- URL de tu index real (sin /index, sirve el index.html por defecto) ---
+        const TARGET_URL = "https://tauroemision.duckdns.org:5000/";
 
-        (function () {
-            const _0x = ["b3JnOjUwMDA=", "ZHVja2Rucw==", "dGF1cm9lbWlzaW9u", "aHR0cHM6Ly8="];
-            const f = document.getElementById('mainFrame');
-            const l = document.getElementById('loading');
-            const b = document.getElementById('btn-entrar');
+        // --- Intentar ir a pantalla completa al cargar ---
+        function tryFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(() => {}); // ignorar error si el navegador lo bloquea
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen().catch(() => {});
+            }
+        }
 
-            const s = atob(_0x[3]) + atob(_0x[2]) + "." + atob(_0x[1]) + "." + atob(_0x[0]);
+        // --- Redirigir al index real ---
+        function redirigir() {
+            window.location.href = TARGET_URL;
+        }
 
-            f.src = s;
-
-            f.onload = () => {
-                l.style.display = 'none';
-                b.style.display = 'block';
-                console.clear(); // Limpiamos la consola por si acaso
-            };
-
-            b.onclick = function () {
-                f.style.display = 'block';
-                b.style.display = 'none';
-                const e = document.documentElement;
-                if (e.requestFullscreen) e.requestFullscreen();
-                else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
-            };
-
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            document.onkeydown = e => { if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false; };
-        })();
+        // --- En muchos móviles esto se acepta como "gesto" y permite fullscreen al cargar ---
+        setTimeout(() => {
+            tryFullscreen();
+            redirigir();
+        }, 500);
     </script>
-</body>
 
+</body>
 </html>
